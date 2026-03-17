@@ -7,6 +7,7 @@ import { Send, Mail } from "lucide-react";
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useHoverSound } from "@/hooks/use-hover-sound";
 
 /* Custom hh.ru SVG icon — red circle with white "hh" */
 function HhIcon({ className }: { className?: string }) {
@@ -61,6 +62,7 @@ export function ContactsSection() {
   const { locale } = useApp();
   const tr = t(locale);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const playHover = useHoverSound();
 
   return (
     <section
@@ -107,7 +109,7 @@ export function ContactsSection() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseEnter={() => { setHoveredIndex(i); playHover(); }}
                 onMouseLeave={() => setHoveredIndex(null)}
                 className={cn(
                   "relative flex flex-col items-center justify-center gap-3 py-12 transition-all duration-500 sm:gap-4 sm:py-20",

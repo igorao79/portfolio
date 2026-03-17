@@ -2,6 +2,7 @@
 
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
+import { useHoverSound } from "@/hooks/use-hover-sound";
 import {
   Home,
   User,
@@ -28,6 +29,7 @@ export function Sidebar() {
   const { locale, setLocale, musicPlaying, toggleMusic, activeSection } =
     useApp();
   const tr = t(locale);
+  const playHover = useHoverSound();
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -48,6 +50,7 @@ export function Sidebar() {
         {/* Music toggle */}
         <Tooltip>
           <TooltipTrigger
+            onMouseEnter={playHover}
             onClick={toggleMusic}
             className={cn(
               "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-sm transition-all hover:scale-110 hover:shadow-md cursor-pointer lg:h-11 lg:w-11",
@@ -64,6 +67,7 @@ export function Sidebar() {
         {/* Language toggle */}
         <Tooltip>
           <TooltipTrigger
+            onMouseEnter={playHover}
             onClick={() => setLocale(locale === "ru" ? "en" : "ru")}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-xs font-bold shadow-sm transition-all hover:scale-110 hover:shadow-md cursor-pointer lg:h-11 lg:w-11"
           >
@@ -83,6 +87,7 @@ export function Sidebar() {
           return (
             <Tooltip key={id}>
               <TooltipTrigger
+                onMouseEnter={playHover}
                 onClick={() => scrollToSection(id)}
                 className={cn(
                   "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-sm transition-all hover:scale-110 hover:shadow-md cursor-pointer lg:h-11 lg:w-11",
