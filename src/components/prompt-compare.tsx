@@ -343,7 +343,12 @@ export function PromptCompare({ locale }: { locale: Locale }) {
         </div>
         <div className="flex flex-1 flex-col overflow-hidden p-3">
           <p className="font-mono text-[11px] leading-relaxed text-emerald-400 sm:text-xs">
-            $ prompt:
+            $ prompt:{" "}
+            {(phase === "bad" || phase === "pause") && goodLines.length === 0 && (
+              <span className="text-gray-500">
+                {locale === "ru" ? "ожидание..." : "waiting..."}
+              </span>
+            )}
           </p>
           {Array.from({ length: MAX_GOOD_LINES }).map((_, i) => (
             <p
@@ -358,11 +363,6 @@ export function PromptCompare({ locale }: { locale: Locale }) {
                 cursor("bg-emerald-400")}
             </p>
           ))}
-          {(phase === "bad" || phase === "pause") && goodLines.length === 0 && (
-            <p className="font-mono text-[11px] text-gray-500 sm:text-xs">
-              {locale === "ru" ? "ожидание..." : "waiting..."}
-            </p>
-          )}
         </div>
         </div>
       </div>
