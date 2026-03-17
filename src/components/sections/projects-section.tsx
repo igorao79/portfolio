@@ -3,63 +3,99 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { Star, ExternalLink, Github } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ExternalLink, Sparkles, Search, Phone, FileText, BarChart3, Repeat } from "lucide-react";
 
-
-interface GithubRepo {
-  id: number;
-  name: string;
-  description: string | null;
-  html_url: string;
-  homepage: string | null;
-  stargazers_count: number;
-  language: string | null;
-  topics: string[];
+interface Project {
+  title: string;
+  description: { ru: string; en: string };
+  url: string;
+  icon: React.ElementType;
+  tags: string[];
+  color: string;
+  featured?: boolean;
 }
 
-const GITHUB_USERNAME = "igor";
+const projects: Project[] = [
+  {
+    title: "Serpium",
+    description: {
+      ru: "Коммерческий проект — генерация SEO-оптимизированных лендингов с помощью ИИ",
+      en: "Commercial project — AI-powered SEO-optimized landing page generator",
+    },
+    url: "https://serpium.up.railway.app/",
+    icon: Sparkles,
+    tags: ["Next.js", "AI", "SEO", "Commercial"],
+    color: "from-violet-500 to-purple-600",
+    featured: true,
+  },
+  {
+    title: "Xivex",
+    description: {
+      ru: "Аналог Perplexity — ИИ-поисковик с интеллектуальными ответами",
+      en: "Perplexity alternative — AI search engine with intelligent answers",
+    },
+    url: "https://xivex.vercel.app/",
+    icon: Search,
+    tags: ["React", "AI", "Search"],
+    color: "from-blue-500 to-cyan-500",
+    featured: true,
+  },
+  {
+    title: "SoulCycle",
+    description: {
+      ru: "Сайт моей книги — красивый лендинг с анимациями",
+      en: "My book's website — beautiful landing with animations",
+    },
+    url: "https://igorao79.github.io/soulcycle/",
+    icon: FileText,
+    tags: ["HTML", "CSS", "Design"],
+    color: "from-amber-500 to-orange-500",
+  },
+  {
+    title: "Convertaryao",
+    description: {
+      ru: "Конвертер файлов — удобный инструмент для конвертации форматов",
+      en: "File converter — handy tool for format conversion",
+    },
+    url: "https://convertaryao.vercel.app/",
+    icon: Repeat,
+    tags: ["Next.js", "TypeScript"],
+    color: "from-emerald-500 to-teal-500",
+  },
+  {
+    title: "Zvonochek",
+    description: {
+      ru: "Приложение для звонков — WebRTC видео/аудио звонки",
+      en: "Calling app — WebRTC video/audio calls",
+    },
+    url: "https://zvonochek.vercel.app/",
+    icon: Phone,
+    tags: ["WebRTC", "React", "Real-time"],
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    title: "Итоги 2025–2026",
+    description: {
+      ru: "Мои итоги за 2025–2026 — интерактивная страница",
+      en: "My 2025–2026 recap — interactive page",
+    },
+    url: "https://igor2025-2026.vercel.app/",
+    icon: BarChart3,
+    tags: ["Next.js", "Framer Motion"],
+    color: "from-pink-500 to-rose-500",
+  },
+];
 
 export function ProjectsSection() {
   const { locale } = useApp();
   const tr = t(locale);
-  const [repos, setRepos] = useState<GithubRepo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=6`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setRepos(data.filter((r: GithubRepo) => !r.name.includes(".github")));
-        } else {
-          setError(true);
-        }
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const langColors: Record<string, string> = {
-    TypeScript: "bg-blue-500",
-    JavaScript: "bg-yellow-400",
-    Python: "bg-green-500",
-    HTML: "bg-orange-500",
-    CSS: "bg-purple-500",
-    Go: "bg-cyan-500",
-    Rust: "bg-red-500",
-  };
 
   return (
     <section
       id="projects"
       className="relative flex min-h-screen items-center justify-center px-4 py-20 sm:px-6 sm:py-24"
     >
-
-      <div className="relative z-10 w-full max-w-4xl">
+      <div className="relative z-10 w-full max-w-5xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -69,77 +105,94 @@ export function ProjectsSection() {
           {tr.projects.title}
         </motion.h2>
 
-        {loading && (
-          <p className="mt-8 text-muted-foreground">{tr.projects.loading}</p>
-        )}
-
-        {error && (
-          <p className="mt-8 text-destructive">{tr.projects.error}</p>
-        )}
-
-        <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4">
-          {repos.map((repo, i) => (
-            <motion.div
-              key={repo.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 * i }}
-              className="group rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/30 sm:p-5"
-            >
-              <div className="flex items-start justify-between">
-                <h3 className="text-base font-semibold sm:text-lg">{repo.name}</h3>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Star className="h-3.5 w-3.5" />
-                  <span className="text-xs">{repo.stargazers_count}</span>
-                </div>
-              </div>
-
-              {repo.description && (
-                <p className="mt-2 text-xs text-muted-foreground line-clamp-2 sm:text-sm">
-                  {repo.description}
-                </p>
-              )}
-
-              <div className="mt-3 flex items-center gap-3 sm:mt-4">
-                {repo.language && (
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className={`h-2.5 w-2.5 rounded-full ${
-                        langColors[repo.language] || "bg-gray-400"
-                      }`}
-                    />
-                    <span className="text-xs text-muted-foreground">
-                      {repo.language}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-3 flex gap-2 sm:mt-4">
-                <a
-                  href={repo.html_url}
+        {/* Featured projects — large cards */}
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2">
+          {projects
+            .filter((p) => p.featured)
+            .map((project, i) => {
+              const Icon = project.icon;
+              return (
+                <motion.a
+                  key={project.title}
+                  href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium transition-colors hover:bg-primary hover:text-primary-foreground sm:px-3 sm:py-1.5"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 * i }}
+                  className="group relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-xl hover:border-primary/30"
                 >
-                  <Github className="h-3 w-3" />
-                  {tr.projects.viewCode}
-                </a>
-                {repo.homepage && (
-                  <a
-                    href={repo.homepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium transition-colors hover:bg-primary hover:text-primary-foreground sm:px-3 sm:py-1.5"
+                  {/* Gradient header */}
+                  <div
+                    className={`flex h-28 items-center justify-center bg-gradient-to-br ${project.color} sm:h-32`}
                   >
-                    <ExternalLink className="h-3 w-3" />
-                    {tr.projects.viewDemo}
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          ))}
+                    <Icon className="h-10 w-10 text-white/90 transition-transform group-hover:scale-110 sm:h-12 sm:w-12" />
+                  </div>
+
+                  <div className="p-4 sm:p-5">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-heading text-lg font-semibold">
+                        {project.title}
+                      </h3>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
+                    <p className="mt-1.5 text-sm text-muted-foreground">
+                      {project.description[locale]}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.a>
+              );
+            })}
+        </div>
+
+        {/* Other projects — compact grid */}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {projects
+            .filter((p) => !p.featured)
+            .map((project, i) => {
+              const Icon = project.icon;
+              return (
+                <motion.a
+                  key={project.title}
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 * i + 0.2 }}
+                  className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
+                >
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${project.color}`}
+                  >
+                    <Icon className="h-5 w-5 text-white/90" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="truncate text-sm font-semibold">
+                        {project.title}
+                      </h3>
+                      <ExternalLink className="h-3 w-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
+                    <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
+                      {project.description[locale]}
+                    </p>
+                  </div>
+                </motion.a>
+              );
+            })}
         </div>
       </div>
     </section>
