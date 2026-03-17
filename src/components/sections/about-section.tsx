@@ -6,22 +6,65 @@ import { motion } from "framer-motion";
 import { Briefcase, Sparkles, Check, X } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 
-const experience = [
+// Timeline: Jan 2024 → Mar 2026 (27 months total)
+const TIMELINE_START = new Date("2024-01-01");
+const TIMELINE_END = new Date("2026-04-01"); // exclusive end
+const TOTAL_MONTHS =
+  (TIMELINE_END.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
+  (TIMELINE_END.getMonth() - TIMELINE_START.getMonth());
+
+interface TimelineEntry {
+  company: string;
+  role: { ru: string; en: string };
+  color: string;
+  start: string; // YYYY-MM
+  end: string; // YYYY-MM or "now"
+}
+
+const timeline: TimelineEntry[] = [
   {
     company: "RPT Team",
     role: { ru: "Fullstack-разработчик", en: "Fullstack Developer" },
-    duration: { ru: "1.5 года", en: "1.5 years" },
-    progress: 0.75,
-    color: "from-indigo-500 to-purple-500",
+    color: "bg-gradient-to-r from-indigo-500 to-purple-500",
+    start: "2024-09",
+    end: "now",
   },
   {
     company: "M.S.T",
     role: { ru: "Разработчик", en: "Developer" },
-    duration: { ru: "1 месяц", en: "1 month" },
-    progress: 0.06,
-    color: "from-emerald-500 to-teal-500",
+    color: "bg-gradient-to-r from-emerald-500 to-teal-500",
+    start: "2025-02",
+    end: "2025-03",
   },
 ];
+
+function monthDiff(from: string): number {
+  const d = new Date(from + "-01");
+  return (
+    (d.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
+    (d.getMonth() - TIMELINE_START.getMonth())
+  );
+}
+
+function monthDiffEnd(to: string): number {
+  if (to === "now") {
+    const now = new Date();
+    return (
+      (now.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
+      (now.getMonth() - TIMELINE_START.getMonth()) +
+      1
+    );
+  }
+  const d = new Date(to + "-01");
+  return (
+    (d.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
+    (d.getMonth() - TIMELINE_START.getMonth()) +
+    1
+  );
+}
+
+// Year labels for the axis
+const yearLabels = [2024, 2025, 2026];
 
 const goodPrompt = {
   ru: [
@@ -149,7 +192,7 @@ export function AboutSection() {
           <AIQuotes locale={locale} />
         </motion.div>
 
-        {/* Experience */}
+        {/* Experience Timeline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -162,46 +205,68 @@ export function AboutSection() {
             {tr.about.experience}
           </h3>
 
-          <div className="mt-4 space-y-4 sm:mt-5">
-            {experience.map((exp, i) => (
-              <motion.div
-                key={exp.company}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * i + 0.2 }}
-                className="rounded-xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:p-5"
-              >
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h4 className="font-heading text-base font-semibold sm:text-lg">
-                      {exp.company}
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {exp.role[locale]}
-                    </p>
-                  </div>
-                  <span className="mt-1 text-xs font-medium text-muted-foreground sm:mt-0 sm:text-sm">
-                    {exp.duration[locale]}
-                  </span>
-                </div>
+          <div className="mt-4 rounded-xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:mt-5 sm:p-6">
+            {/* Timeline bars */}
+            <div className="space-y-3">
+              {timeline.map((entry, i) => {
+                const startOffset = monthDiff(entry.start);
+                const endOffset = monthDiffEnd(entry.end);
+                const leftPct = (startOffset / TOTAL_MONTHS) * 100;
+                const widthPct =
+                  ((endOffset - startOffset) / TOTAL_MONTHS) * 100;
 
-                {/* Progress bar */}
-                <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-muted">
-                  <motion.div
-                    className={`h-full rounded-full bg-gradient-to-r ${exp.color}`}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${Math.max(exp.progress * 100, 4)}%` }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 1.2,
-                      delay: 0.3 + 0.15 * i,
-                      ease: "easeOut",
-                    }}
-                  />
-                </div>
-              </motion.div>
-            ))}
+                return (
+                  <div key={entry.company} className="relative">
+                    {/* Label */}
+                    <div className="mb-1.5 flex items-baseline justify-between">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-sm font-semibold">
+                          {entry.company}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {entry.role[locale]}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        {entry.start} → {entry.end === "now" ? (locale === "ru" ? "н.в." : "now") : entry.end}
+                      </span>
+                    </div>
+                    {/* Bar track */}
+                    <div className="relative h-3 w-full rounded-full bg-muted">
+                      <motion.div
+                        className={`absolute top-0 h-full rounded-full ${entry.color}`}
+                        style={{ left: `${leftPct}%` }}
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${widthPct}%` }}
+                        viewport={{ once: true }}
+                        transition={{
+                          duration: 1,
+                          delay: 0.2 + 0.15 * i,
+                          ease: "easeOut",
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Year axis */}
+            <div className="relative mt-3 h-5 w-full">
+              {yearLabels.map((year) => {
+                const offset =
+                  ((year - TIMELINE_START.getFullYear()) * 12) / TOTAL_MONTHS;
+                return (
+                  <span
+                    key={year}
+                    className="absolute -translate-x-1/2 text-[10px] tabular-nums text-muted-foreground"
+                    style={{ left: `${offset * 100}%` }}
+                  >
+                    {year}
+                  </span>
+                );
+              })}
+            </div>
           </div>
         </motion.div>
       </div>
