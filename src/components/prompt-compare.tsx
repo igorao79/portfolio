@@ -93,7 +93,7 @@ const PAUSE_BETWEEN = 800;
 const DISPLAY_TIME = 3000;
 
 /* ── Claw'd pixel crab (Claude Code style, 8-bit, theme-aware) ── */
-function Clawd({ visible }: { visible: boolean }) {
+function Clawd() {
   // Exact pixel grid matching the Claude Code welcome screen crab
   // Each rect = 1 pixel unit in a 15x11 grid, scaled up
   const S = 3; // scale factor
@@ -122,18 +122,11 @@ function Clawd({ visible }: { visible: boolean }) {
   ];
 
   return (
-    <div
-      className={`flex items-center justify-center transition-all duration-500 ${
-        visible ? "opacity-100 scale-100" : "opacity-0 scale-75"
-      }`}
-      style={{ height: 36, marginTop: 4 }}
-    >
+    <div className="flex items-center justify-center">
       <svg
         width={15 * S}
         height={11 * S}
         viewBox={`0 0 ${15 * S} ${11 * S}`}
-        className={visible ? "animate-bounce" : ""}
-        style={{ animationDuration: "0.7s" }}
       >
         {pixels.map(([x, y, w, h, type], i) => (
           <rect
@@ -248,7 +241,7 @@ export function PromptCompare({ locale }: { locale: Locale }) {
     <div className="mt-5 grid gap-3 sm:grid-cols-2">
       {/* Bad prompt — LEFT */}
       <div
-        className="flex flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70"
+        className="relative flex flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70"
         style={{ height: PANEL_HEIGHT }}
       >
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
@@ -268,11 +261,15 @@ export function PromptCompare({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      {/* Good prompt — RIGHT */}
-      <div
-        className="flex flex-col overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70"
-        style={{ height: PANEL_HEIGHT }}
-      >
+      {/* Good prompt — RIGHT (with Claw'd sitting on top-right) */}
+      <div className="relative" style={{ height: PANEL_HEIGHT }}>
+        {/* Claw'd crab — always visible, perched on top-right corner */}
+        <div className="absolute -top-8 right-2 z-10">
+          <Clawd />
+        </div>
+        <div
+          className="flex h-full flex-col overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70"
+        >
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
           <Check className="h-3.5 w-3.5 text-emerald-400" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-emerald-400">
@@ -301,8 +298,7 @@ export function PromptCompare({ locale }: { locale: Locale }) {
               {locale === "ru" ? "ожидание..." : "waiting..."}
             </p>
           )}
-          {/* Claw'd crab on success */}
-          <Clawd visible={phase === "display"} />
+        </div>
         </div>
       </div>
     </div>
