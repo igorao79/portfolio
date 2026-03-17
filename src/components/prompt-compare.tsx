@@ -149,6 +149,67 @@ function Clawd() {
   );
 }
 
+/* ── Dead Claw'd — flipped, no legs, X eyes ── */
+function DeadClawd() {
+  const S = 3;
+  // prettier-ignore
+  const pixels: [number, number, number, number, string][] = [
+    // Body (same shape, but no claws raised, no legs — upside down)
+    // Body top row
+    [4,1,7,1,"fill"],
+    // Body rows
+    [3,2,9,1,"fill"],
+    // Eyes row — body parts around X eyes
+    [3,3,2,1,"fill"], [6,3,3,1,"fill"], [10,3,2,1,"fill"],
+    // X eye placeholders (will draw X lines over these)
+    [5,3,1,1,"xeye"], [9,3,1,1,"xeye"],
+    // Body middle
+    [3,4,9,1,"fill"],
+    [4,5,7,1,"fill"],
+    // Mouth
+    [5,5,2,1,"mouth"], [8,5,2,1,"mouth"],
+    // Claws drooping down
+    // Left claw
+    [1,4,1,1,"fill"], [2,4,1,1,"fill"], [2,5,1,1,"fill"], [3,5,1,1,"fill"],
+    // Right claw
+    [11,4,1,1,"fill"], [12,4,1,1,"fill"], [12,5,1,1,"fill"], [13,5,1,1,"fill"],
+  ];
+
+  return (
+    <div className="flex items-center justify-center" style={{ transform: "scaleY(-1)" }}>
+      <svg
+        width={15 * S}
+        height={7 * S}
+        viewBox={`0 0 ${15 * S} ${7 * S}`}
+      >
+        {pixels.map(([x, y, w, h, type], i) => (
+          <rect
+            key={i}
+            x={x * S}
+            y={y * S}
+            width={w * S}
+            height={h * S}
+            className={
+              type === "xeye"
+                ? "fill-red-500"
+                : type === "mouth"
+                  ? "fill-transparent"
+                  : "fill-foreground"
+            }
+          />
+        ))}
+        {/* X marks for eyes — drawn as lines */}
+        {/* Left X */}
+        <line x1={5*S} y1={3*S} x2={6*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
+        <line x1={6*S} y1={3*S} x2={5*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
+        {/* Right X */}
+        <line x1={9*S} y1={3*S} x2={10*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
+        <line x1={10*S} y1={3*S} x2={9*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+}
+
 export function PromptCompare({ locale }: { locale: Locale }) {
   const [pairIdx, setPairIdx] = useState(0);
   const [badText, setBadText] = useState("");
@@ -239,11 +300,15 @@ export function PromptCompare({ locale }: { locale: Locale }) {
 
   return (
     <div className="mt-5 grid gap-3 sm:grid-cols-2">
-      {/* Bad prompt — LEFT */}
-      <div
-        className="relative flex flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70"
-        style={{ height: PANEL_HEIGHT }}
-      >
+      {/* Bad prompt — LEFT (with dead Claw'd on top-right) */}
+      <div className="relative" style={{ height: PANEL_HEIGHT }}>
+        {/* Dead Claw'd — always visible, perched upside-down on top-right */}
+        <div className="absolute -top-5 right-2 z-10">
+          <DeadClawd />
+        </div>
+        <div
+          className="flex h-full flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70"
+        >
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
           <X className="h-3.5 w-3.5 text-red-400" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-red-400">
@@ -258,6 +323,7 @@ export function PromptCompare({ locale }: { locale: Locale }) {
             {badText}
             {phase === "bad" && cursor("bg-red-400")}
           </p>
+        </div>
         </div>
       </div>
 
