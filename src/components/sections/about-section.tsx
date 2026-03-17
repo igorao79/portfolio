@@ -6,6 +6,7 @@ import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 
 import { Briefcase, Sparkles } from "lucide-react";
+import { AIQuotes } from "@/components/ai-quotes";
 
 const skills = [
   "React",
@@ -95,6 +96,17 @@ export function AboutSection() {
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
             {tr.about.bioStory}
           </p>
+        </motion.div>
+
+        {/* AI Quotes */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.14 }}
+          className="mt-8 sm:mt-10"
+        >
+          <AIQuotes locale={locale} />
         </motion.div>
 
         {/* Experience */}
