@@ -3,8 +3,9 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { Briefcase, Sparkles, Check, X } from "lucide-react";
+import { Briefcase, Sparkles } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
+import { PromptCompare } from "@/components/prompt-compare";
 
 // Timeline: Jan 2024 → Mar 2026 (27 months total)
 const TIMELINE_START = new Date("2024-01-01");
@@ -66,31 +67,7 @@ function monthDiffEnd(to: string): number {
 // Year labels for the axis
 const yearLabels = [2024, 2025, 2026];
 
-const goodPrompt = {
-  ru: [
-    "$ prompt:",
-    "Создай компонент Button на React + TypeScript.",
-    "Используй forwardRef, принимай variant",
-    '("primary" | "ghost" | "outline"),',
-    "size ('sm' | 'md' | 'lg'), и disabled.",
-    "Стилизуй через cva из class-variance-authority.",
-    "Экспортируй тип ButtonProps.",
-  ],
-  en: [
-    "$ prompt:",
-    "Create a Button component in React + TypeScript.",
-    "Use forwardRef, accept variant",
-    '("primary" | "ghost" | "outline"),',
-    "size ('sm' | 'md' | 'lg'), and disabled.",
-    "Style with cva from class-variance-authority.",
-    "Export the ButtonProps type.",
-  ],
-};
-
-const badPrompt = {
-  ru: ["$ prompt:", "сделай мне кнопку"],
-  en: ["$ prompt:", "make me a button"],
-};
+// prompt data moved to PromptCompare component
 
 export function AboutSection() {
   const { locale } = useApp();
@@ -129,56 +106,8 @@ export function AboutSection() {
             {tr.about.bioStory}
           </p>
 
-          {/* Console examples */}
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {/* Good prompt */}
-            <div className="overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70">
-              <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
-                <Check className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-[10px] font-medium uppercase tracking-wider text-emerald-400">
-                  {locale === "ru" ? "Правильно" : "Good"}
-                </span>
-              </div>
-              <div className="p-3">
-                {goodPrompt[locale].map((line, i) => (
-                  <p
-                    key={i}
-                    className={`font-mono text-[11px] leading-relaxed sm:text-xs ${
-                      i === 0
-                        ? "text-emerald-400"
-                        : "text-gray-300"
-                    }`}
-                  >
-                    {line}
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            {/* Bad prompt */}
-            <div className="overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70">
-              <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
-                <X className="h-3.5 w-3.5 text-red-400" />
-                <span className="text-[10px] font-medium uppercase tracking-wider text-red-400">
-                  {locale === "ru" ? "Неправильно" : "Bad"}
-                </span>
-              </div>
-              <div className="p-3">
-                {badPrompt[locale].map((line, i) => (
-                  <p
-                    key={i}
-                    className={`font-mono text-[11px] leading-relaxed sm:text-xs ${
-                      i === 0
-                        ? "text-red-400"
-                        : "text-gray-300"
-                    }`}
-                  >
-                    {line}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* Animated prompt comparison */}
+          <PromptCompare locale={locale} />
         </motion.div>
 
         {/* AI Quotes */}
