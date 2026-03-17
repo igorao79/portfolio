@@ -300,22 +300,18 @@ export function PromptCompare({ locale }: { locale: Locale }) {
 
   return (
     <div className="mt-5 grid gap-3 sm:grid-cols-2">
-      {/* Bad prompt — LEFT (with dead Claw'd on top-right) */}
-      <div className="relative" style={{ height: PANEL_HEIGHT }}>
-        {/* Dead Claw'd — always visible, perched upside-down on top-right */}
-        <div className="absolute -top-5 right-2 z-10">
-          <DeadClawd />
-        </div>
-        <div
-          className="flex h-full flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70"
-        >
+      {/* Bad prompt — LEFT */}
+      <div
+        className="relative flex flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70"
+        style={{ height: PANEL_HEIGHT }}
+      >
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
           <X className="h-3.5 w-3.5 text-red-400" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-red-400">
             {locale === "ru" ? "Неправильно" : "Bad"}
           </span>
         </div>
-        <div className="flex-1 overflow-hidden p-3">
+        <div className="relative flex-1 overflow-hidden p-3">
           <p className="font-mono text-[11px] leading-relaxed text-red-400 sm:text-xs">
             $ prompt:
           </p>
@@ -323,7 +319,10 @@ export function PromptCompare({ locale }: { locale: Locale }) {
             {badText}
             {phase === "bad" && cursor("bg-red-400")}
           </p>
-        </div>
+          {/* Dead Claw'd inside terminal, bottom-right */}
+          <div className="absolute bottom-2 right-2 opacity-60">
+            <DeadClawd />
+          </div>
         </div>
       </div>
 
