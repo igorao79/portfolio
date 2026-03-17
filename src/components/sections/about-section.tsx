@@ -5,7 +5,7 @@ import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 
-import { Briefcase } from "lucide-react";
+import { Briefcase, Sparkles } from "lucide-react";
 
 const skills = [
   "React",
@@ -79,6 +79,23 @@ export function AboutSection() {
         >
           {tr.about.bio}
         </motion.p>
+
+        {/* My Story */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.12 }}
+          className="mt-8 rounded-xl border border-border bg-card/80 p-5 shadow-sm backdrop-blur-sm sm:mt-10 sm:p-6"
+        >
+          <h3 className="flex items-center gap-2 font-heading text-lg font-semibold sm:text-xl">
+            <Sparkles className="h-5 w-5 text-muted-foreground" />
+            {locale === "ru" ? "Мой путь" : "My Journey"}
+          </h3>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {tr.about.bioStory}
+          </p>
+        </motion.div>
 
         {/* Experience */}
         <motion.div

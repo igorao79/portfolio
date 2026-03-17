@@ -18,7 +18,8 @@ export const translations = {
     },
     about: {
       title: "Обо мне",
-      bio: "Я fullstack-разработчик с опытом создания веб-приложений. Специализируюсь на React, Next.js, TypeScript и Node.js. Увлечён чистым кодом, производительностью и созданием интуитивных пользовательских интерфейсов.",
+      bio: "Я fullstack-разработчик, специализируюсь на React, Next.js, TypeScript и Node.js. Увлечён чистым кодом, производительностью и созданием интуитивных интерфейсов.",
+      bioStory: "Начал программировать в 17 лет — с нуля, как и все. Спустя год открыл для себя AI-инструменты разработки, и это стало переломным моментом. Cursor и подобные инструменты вывели мою продуктивность на принципиально новый уровень: то, что раньше занимало неделю, теперь укладывается в день. Я активно продвигаю AI в разработке, но убеждён — без глубокого понимания кода это просто бессмысленный промптинг. ИИ усиливает разработчика, но не заменяет его.",
       skills: "Навыки",
       experience: "Опыт работы",
     },
@@ -64,7 +65,8 @@ export const translations = {
     },
     about: {
       title: "About Me",
-      bio: "I'm a fullstack developer with experience building web applications. I specialize in React, Next.js, TypeScript, and Node.js. Passionate about clean code, performance, and creating intuitive user interfaces.",
+      bio: "I'm a fullstack developer specializing in React, Next.js, TypeScript, and Node.js. Passionate about clean code, performance, and creating intuitive interfaces.",
+      bioStory: "I started coding at 17 — from scratch, like everyone else. A year in, I discovered AI-powered dev tools, and it was a game-changer. Cursor and similar tools took my productivity to a whole new level: what used to take a week now fits into a single day. I actively advocate for AI in development, but I firmly believe — without deep understanding of the code, it's just mindless prompting. AI amplifies a developer, but never replaces one.",
       skills: "Skills",
       experience: "Experience",
     },
