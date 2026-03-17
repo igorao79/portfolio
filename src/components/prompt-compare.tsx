@@ -92,45 +92,66 @@ const CHAR_DELAY = 35;
 const PAUSE_BETWEEN = 800;
 const DISPLAY_TIME = 3000;
 
-/* ── Dancing Crab SVG (Claude Code style, pixel art) ── */
-function DancingCrab({ phase }: { phase: string }) {
-  const show = phase === "display";
+/* ── Claw'd pixel crab (Claude Code style, 8-bit, theme-aware) ── */
+function Clawd({ visible }: { visible: boolean }) {
+  // Exact pixel grid matching the Claude Code welcome screen crab
+  // Each rect = 1 pixel unit in a 15x11 grid, scaled up
+  const S = 3; // scale factor
+  // prettier-ignore
+  const pixels: [number, number, number, number, string][] = [
+    // Claws (raised up)
+    // Left claw
+    [1,2,1,1,"fill"], [2,1,1,1,"fill"], [2,2,1,1,"fill"], [3,2,1,1,"fill"],
+    // Right claw
+    [11,2,1,1,"fill"], [12,1,1,1,"fill"], [12,2,1,1,"fill"], [13,2,1,1,"fill"],
+    // Body top row
+    [4,3,7,1,"fill"],
+    // Body middle (with eyes)
+    [3,4,9,1,"fill"],
+    // Eyes row
+    [3,5,2,1,"fill"], [6,5,3,1,"fill"], [10,5,2,1,"fill"],
+    // Eye pixels (inverted - these are the dark squares)
+    [5,5,1,1,"eye"], [9,5,1,1,"eye"],
+    // Body rows
+    [3,6,9,1,"fill"],
+    [4,7,7,1,"fill"],
+    // Mouth opening
+    [5,7,2,1,"mouth"], [8,7,2,1,"mouth"],
+    // Legs
+    [4,8,1,2,"fill"], [6,8,1,2,"fill"], [8,8,1,2,"fill"], [10,8,1,2,"fill"],
+  ];
+
   return (
     <div
-      className={`mt-2 flex items-center justify-center transition-opacity duration-500 ${
-        show ? "opacity-100" : "opacity-0"
+      className={`flex items-center justify-center transition-all duration-500 ${
+        visible ? "opacity-100 scale-100" : "opacity-0 scale-75"
       }`}
-      style={{ height: 32 }}
+      style={{ height: 36, marginTop: 4 }}
     >
-      {show && (
-        <svg
-          width="40"
-          height="28"
-          viewBox="0 0 40 28"
-          fill="none"
-          className="animate-bounce"
-          style={{ animationDuration: "0.6s" }}
-        >
-          {/* Body */}
-          <rect x="12" y="8" width="16" height="12" rx="3" fill="#e07850" />
-          {/* Eyes */}
-          <rect x="16" y="11" width="3" height="3" fill="#1a1a1a" />
-          <rect x="22" y="11" width="3" height="3" fill="#1a1a1a" />
-          {/* Mouth */}
-          <rect x="18" y="16" width="5" height="2" rx="1" fill="#c0603a" />
-          {/* Left claw */}
-          <rect x="4" y="6" width="8" height="4" rx="2" fill="#e07850" />
-          <rect x="4" y="4" width="4" height="4" rx="1" fill="#e07850" />
-          {/* Right claw */}
-          <rect x="28" y="6" width="8" height="4" rx="2" fill="#e07850" />
-          <rect x="32" y="4" width="4" height="4" rx="1" fill="#e07850" />
-          {/* Legs */}
-          <rect x="14" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-          <rect x="18" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-          <rect x="22" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-          <rect x="26" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-        </svg>
-      )}
+      <svg
+        width={15 * S}
+        height={11 * S}
+        viewBox={`0 0 ${15 * S} ${11 * S}`}
+        className={visible ? "animate-bounce" : ""}
+        style={{ animationDuration: "0.7s" }}
+      >
+        {pixels.map(([x, y, w, h, type], i) => (
+          <rect
+            key={i}
+            x={x * S}
+            y={y * S}
+            width={w * S}
+            height={h * S}
+            className={
+              type === "eye"
+                ? "fill-emerald-400"
+                : type === "mouth"
+                  ? "fill-transparent"
+                  : "fill-foreground"
+            }
+          />
+        ))}
+      </svg>
     </div>
   );
 }
@@ -280,8 +301,8 @@ export function PromptCompare({ locale }: { locale: Locale }) {
               {locale === "ru" ? "ожидание..." : "waiting..."}
             </p>
           )}
-          {/* Dancing crab on success */}
-          <DancingCrab phase={phase} />
+          {/* Claw'd crab on success */}
+          <Clawd visible={phase === "display"} />
         </div>
       </div>
     </div>
