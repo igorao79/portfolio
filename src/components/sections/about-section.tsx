@@ -206,8 +206,8 @@ export function AboutSection() {
           </h3>
 
           <div className="mt-4 rounded-xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:mt-5 sm:p-6">
-            {/* Timeline bars */}
-            <div className="space-y-3">
+            {/* Single unified bar */}
+            <div className="relative h-8 w-full rounded-full bg-muted sm:h-10">
               {timeline.map((entry, i) => {
                 const startOffset = monthDiff(entry.start);
                 const endOffset = monthDiffEnd(entry.end);
@@ -216,43 +216,29 @@ export function AboutSection() {
                   ((endOffset - startOffset) / TOTAL_MONTHS) * 100;
 
                 return (
-                  <div key={entry.company} className="relative">
-                    {/* Label */}
-                    <div className="mb-1.5 flex items-baseline justify-between">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-sm font-semibold">
-                          {entry.company}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {entry.role[locale]}
-                        </span>
-                      </div>
-                      <span className="text-[10px] text-muted-foreground tabular-nums">
-                        {entry.start} → {entry.end === "now" ? (locale === "ru" ? "н.в." : "now") : entry.end}
-                      </span>
-                    </div>
-                    {/* Bar track */}
-                    <div className="relative h-3 w-full rounded-full bg-muted">
-                      <motion.div
-                        className={`absolute top-0 h-full rounded-full ${entry.color}`}
-                        style={{ left: `${leftPct}%` }}
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${widthPct}%` }}
-                        viewport={{ once: true }}
-                        transition={{
-                          duration: 1,
-                          delay: 0.2 + 0.15 * i,
-                          ease: "easeOut",
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <motion.div
+                    key={entry.company}
+                    className={`group absolute top-0 flex h-full cursor-default items-center justify-center overflow-hidden rounded-full ${entry.color} shadow-sm`}
+                    style={{ left: `${leftPct}%` }}
+                    initial={{ width: 0, opacity: 0 }}
+                    whileInView={{ width: `${widthPct}%`, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 1,
+                      delay: 0.2 + 0.2 * i,
+                      ease: "easeOut",
+                    }}
+                  >
+                    <span className="truncate px-2 text-[9px] font-semibold text-white sm:text-[11px]">
+                      {entry.company}
+                    </span>
+                  </motion.div>
                 );
               })}
             </div>
 
             {/* Year axis */}
-            <div className="relative mt-3 h-5 w-full">
+            <div className="relative mt-2 h-5 w-full">
               {yearLabels.map((year) => {
                 const offset =
                   ((year - TIMELINE_START.getFullYear()) * 12) / TOTAL_MONTHS;
@@ -266,6 +252,19 @@ export function AboutSection() {
                   </span>
                 );
               })}
+            </div>
+
+            {/* Legend */}
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-border pt-3">
+              {timeline.map((entry) => (
+                <div key={entry.company} className="flex items-center gap-1.5">
+                  <span className={`h-2.5 w-2.5 rounded-full ${entry.color}`} />
+                  <span className="text-xs font-medium">{entry.company}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    — {entry.role[locale]}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </motion.div>
