@@ -87,7 +87,9 @@ const prompts: PromptPair[] = [
   },
 ];
 
-// Typing speed in ms per character
+// Max lines in good prompts (for fixed height)
+const MAX_GOOD_LINES = 3;
+
 const CHAR_DELAY = 35;
 const PAUSE_BETWEEN = 800;
 const DISPLAY_TIME = 3000;
@@ -174,57 +176,67 @@ export function PromptCompare({ locale }: { locale: Locale }) {
     return cleanup;
   }, [phase, pair, locale, typeText, typeLines]);
 
-  // Reset when locale changes
   useEffect(() => {
     setBadText("");
     setGoodLines([]);
     setPhase("bad");
   }, [locale]);
 
+  // Cursor element
+  const cursor = (color: string) => (
+    <span
+      className={`ml-0.5 inline-block w-1.5 translate-y-[2px] animate-pulse ${color}`}
+      style={{ height: "0.85em" }}
+    />
+  );
+
   return (
     <div className="mt-5 grid gap-3 sm:grid-cols-2">
       {/* Bad prompt — LEFT */}
-      <div className="overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70">
+      <div className="flex flex-col overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70">
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
           <X className="h-3.5 w-3.5 text-red-400" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-red-400">
             {locale === "ru" ? "Неправильно" : "Bad"}
           </span>
         </div>
-        <div className="p-3">
+        {/* Fixed height content area */}
+        <div className="flex flex-1 flex-col justify-start p-3" style={{ minHeight: "5.5rem" }}>
           <p className="font-mono text-[11px] leading-relaxed text-red-400 sm:text-xs">
             $ prompt:
           </p>
           <p className="font-mono text-[11px] leading-relaxed text-gray-300 sm:text-xs">
             {badText}
-            {phase === "bad" && (
-              <span className="ml-0.5 inline-block h-3.5 w-1.5 animate-pulse bg-red-400" />
-            )}
+            {phase === "bad" && cursor("bg-red-400")}
           </p>
         </div>
       </div>
 
       {/* Good prompt — RIGHT */}
-      <div className="overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70">
+      <div className="flex flex-col overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70">
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
           <Check className="h-3.5 w-3.5 text-emerald-400" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-emerald-400">
             {locale === "ru" ? "Правильно" : "Good"}
           </span>
         </div>
-        <div className="p-3">
+        {/* Fixed height content area — reserves space for MAX_GOOD_LINES */}
+        <div className="flex flex-1 flex-col justify-start p-3" style={{ minHeight: "5.5rem" }}>
           <p className="font-mono text-[11px] leading-relaxed text-emerald-400 sm:text-xs">
             $ prompt:
           </p>
-          {goodLines.map((line, i) => (
+          {/* Always render MAX_GOOD_LINES slots to prevent layout shift */}
+          {Array.from({ length: MAX_GOOD_LINES }).map((_, i) => (
             <p
               key={i}
               className="font-mono text-[11px] leading-relaxed text-gray-300 sm:text-xs"
+              style={{ minHeight: "1.25em" }}
             >
-              {line}
-              {phase === "good" && i === goodLines.length - 1 && (
-                <span className="ml-0.5 inline-block h-3.5 w-1.5 animate-pulse bg-emerald-400" />
-              )}
+              {goodLines[i] || ""}
+              {phase === "good" &&
+                i === goodLines.length - 1 &&
+                goodLines.length > 0 &&
+                cursor("bg-emerald-400")}
             </p>
           ))}
           {(phase === "bad" || phase === "pause") && goodLines.length === 0 && (
