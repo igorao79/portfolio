@@ -1,25 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-
-import { Briefcase, Sparkles } from "lucide-react";
+import { Briefcase, Sparkles, Check, X } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
-
-const skills = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Node.js",
-  "Tailwind CSS",
-  "PostgreSQL",
-  "Docker",
-  "Git",
-  "Python",
-  "REST API",
-];
 
 const experience = [
   {
@@ -38,6 +23,32 @@ const experience = [
   },
 ];
 
+const goodPrompt = {
+  ru: [
+    "$ prompt:",
+    "Создай компонент Button на React + TypeScript.",
+    "Используй forwardRef, принимай variant",
+    '("primary" | "ghost" | "outline"),',
+    "size ('sm' | 'md' | 'lg'), и disabled.",
+    "Стилизуй через cva из class-variance-authority.",
+    "Экспортируй тип ButtonProps.",
+  ],
+  en: [
+    "$ prompt:",
+    "Create a Button component in React + TypeScript.",
+    "Use forwardRef, accept variant",
+    '("primary" | "ghost" | "outline"),',
+    "size ('sm' | 'md' | 'lg'), and disabled.",
+    "Style with cva from class-variance-authority.",
+    "Export the ButtonProps type.",
+  ],
+};
+
+const badPrompt = {
+  ru: ["$ prompt:", "сделай мне кнопку"],
+  en: ["$ prompt:", "make me a button"],
+};
+
 export function AboutSection() {
   const { locale } = useApp();
   const tr = t(locale);
@@ -47,47 +58,25 @@ export function AboutSection() {
       id="about"
       className="relative flex min-h-screen items-center justify-center px-4 py-20 sm:px-6 sm:py-24"
     >
-
       <div className="relative z-10 w-full max-w-3xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex items-center gap-4"
         >
-          <div className="h-14 w-14 overflow-hidden rounded-xl border border-border shadow-sm sm:h-16 sm:w-16">
-            <Image
-              src="/igorlogo.webp"
-              alt="Igor Logo"
-              width={64}
-              height={64}
-              className="h-full w-full object-cover"
-            />
-          </div>
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
             {tr.about.title}
           </h2>
         </motion.div>
-
-        {/* Bio */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="mt-4 text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg"
-        >
-          {tr.about.bio}
-        </motion.p>
 
         {/* My Story */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.12 }}
-          className="mt-8 rounded-xl border border-border bg-card/80 p-5 shadow-sm backdrop-blur-sm sm:mt-10 sm:p-6"
+          transition={{ delay: 0.1 }}
+          className="mt-6 rounded-xl border border-border bg-card/80 p-5 shadow-sm backdrop-blur-sm sm:mt-8 sm:p-6"
         >
           <h3 className="flex items-center gap-2 font-heading text-lg font-semibold sm:text-xl">
             <Sparkles className="h-5 w-5 text-muted-foreground" />
@@ -96,6 +85,57 @@ export function AboutSection() {
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
             {tr.about.bioStory}
           </p>
+
+          {/* Console examples */}
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {/* Good prompt */}
+            <div className="overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70">
+              <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="text-[10px] font-medium uppercase tracking-wider text-emerald-400">
+                  {locale === "ru" ? "Правильно" : "Good"}
+                </span>
+              </div>
+              <div className="p-3">
+                {goodPrompt[locale].map((line, i) => (
+                  <p
+                    key={i}
+                    className={`font-mono text-[11px] leading-relaxed sm:text-xs ${
+                      i === 0
+                        ? "text-emerald-400"
+                        : "text-gray-300"
+                    }`}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            {/* Bad prompt */}
+            <div className="overflow-hidden rounded-lg border border-red-500/30 bg-black/90 dark:bg-black/70">
+              <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
+                <X className="h-3.5 w-3.5 text-red-400" />
+                <span className="text-[10px] font-medium uppercase tracking-wider text-red-400">
+                  {locale === "ru" ? "Неправильно" : "Bad"}
+                </span>
+              </div>
+              <div className="p-3">
+                {badPrompt[locale].map((line, i) => (
+                  <p
+                    key={i}
+                    className={`font-mono text-[11px] leading-relaxed sm:text-xs ${
+                      i === 0
+                        ? "text-red-400"
+                        : "text-gray-300"
+                    }`}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         {/* AI Quotes */}
@@ -161,33 +201,6 @@ export function AboutSection() {
                   />
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Skills */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="mt-8 sm:mt-10"
-        >
-          <h3 className="font-heading text-lg font-semibold sm:text-xl">
-            {tr.about.skills}
-          </h3>
-          <div className="mt-3 flex flex-wrap gap-2 sm:mt-4 sm:gap-3">
-            {skills.map((skill, i) => (
-              <motion.span
-                key={skill}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.05 * i }}
-                className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-primary hover:text-primary-foreground sm:px-4 sm:py-2 sm:text-sm"
-              >
-                {skill}
-              </motion.span>
             ))}
           </div>
         </motion.div>
