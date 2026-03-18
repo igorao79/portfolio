@@ -319,29 +319,25 @@ export function PromptCompare({ locale }: { locale: Locale }) {
             {badText}
             {phase === "bad" && cursor("bg-red-400")}
           </p>
-          {/* Dead Claw'd inside terminal, bottom-right */}
-          <div className="absolute bottom-2 right-2 opacity-60">
+          {/* Dead Claw'd inside terminal, top-right */}
+          <div className="absolute right-2 top-2 opacity-60">
             <DeadClawd />
           </div>
         </div>
       </div>
 
-      {/* Good prompt — RIGHT (with Claw'd sitting on top-right) */}
-      <div className="relative" style={{ height: PANEL_HEIGHT }}>
-        {/* Claw'd crab — always visible, perched on top-right corner */}
-        <div className="absolute -top-8 right-2 z-10">
-          <Clawd />
-        </div>
-        <div
-          className="flex h-full flex-col overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70"
-        >
+      {/* Good prompt — RIGHT */}
+      <div
+        className="flex flex-col overflow-hidden rounded-lg border border-emerald-500/30 bg-black/90 dark:bg-black/70"
+        style={{ height: PANEL_HEIGHT }}
+      >
         <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
           <Check className="h-3.5 w-3.5 text-emerald-400" />
           <span className="text-[10px] font-medium uppercase tracking-wider text-emerald-400">
             {locale === "ru" ? "Правильно" : "Good"}
           </span>
         </div>
-        <div className="flex flex-1 flex-col overflow-hidden p-3">
+        <div className="relative flex flex-1 flex-col overflow-hidden p-3">
           <p className="font-mono text-[11px] leading-relaxed text-emerald-400 sm:text-xs">
             $ prompt:{" "}
             {(phase === "bad" || phase === "pause") && goodLines.length === 0 && (
@@ -363,7 +359,10 @@ export function PromptCompare({ locale }: { locale: Locale }) {
                 cursor("bg-emerald-400")}
             </p>
           ))}
-        </div>
+          {/* Claw'd crab inside terminal, top-right */}
+          <div className="absolute right-2 top-2 opacity-60">
+            <Clawd />
+          </div>
         </div>
       </div>
     </div>
