@@ -20,15 +20,15 @@ interface TimelineEntry {
 const timeline: TimelineEntry[] = [
   {
     company: "RPT Team",
-    role: { ru: "Fullstack-разработчик", en: "Fullstack Developer" },
+    role: { ru: "AI верстальщик / AI Python Developer", en: "AI Developer / AI Python Developer" },
     start: "2024-09",
     end: "2025-12",
     color: "border-indigo-500",
     dotColor: "bg-indigo-500",
   },
   {
-    company: "M.S.T",
-    role: { ru: "Разработчик", en: "Developer" },
+    company: "M.S.T.",
+    role: { ru: "AI Fullstack Developer", en: "AI Fullstack Developer" },
     start: "2026-01",
     end: "2026-03",
     color: "border-emerald-500",
