@@ -3,71 +3,46 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { Briefcase, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 import { PromptCompare } from "@/components/prompt-compare";
-
-// Timeline: Jan 2024 → Mar 2026 (27 months total)
-const TIMELINE_START = new Date("2024-01-01");
-const TIMELINE_END = new Date("2026-04-01"); // exclusive end
-const TOTAL_MONTHS =
-  (TIMELINE_END.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
-  (TIMELINE_END.getMonth() - TIMELINE_START.getMonth());
 
 interface TimelineEntry {
   company: string;
   role: { ru: string; en: string };
+  start: string;
+  end: string;
   color: string;
-  start: string; // YYYY-MM
-  end: string; // YYYY-MM or "now"
+  dotColor: string;
 }
 
 const timeline: TimelineEntry[] = [
   {
     company: "RPT Team",
     role: { ru: "Fullstack-разработчик", en: "Fullstack Developer" },
-    color: "bg-gradient-to-r from-indigo-500 to-purple-500",
     start: "2024-09",
     end: "now",
+    color: "border-indigo-500",
+    dotColor: "bg-indigo-500",
   },
   {
     company: "M.S.T",
     role: { ru: "Разработчик", en: "Developer" },
-    color: "bg-gradient-to-r from-emerald-500 to-teal-500",
     start: "2025-02",
     end: "2025-03",
+    color: "border-emerald-500",
+    dotColor: "bg-emerald-500",
   },
 ];
 
-function monthDiff(from: string): number {
-  const d = new Date(from + "-01");
-  return (
-    (d.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
-    (d.getMonth() - TIMELINE_START.getMonth())
-  );
+function formatDate(d: string, locale: string): string {
+  if (d === "now") return locale === "ru" ? "настоящее время" : "present";
+  const date = new Date(d + "-01");
+  return date.toLocaleDateString(locale === "ru" ? "ru-RU" : "en-US", {
+    month: "short",
+    year: "numeric",
+  });
 }
-
-function monthDiffEnd(to: string): number {
-  if (to === "now") {
-    const now = new Date();
-    return (
-      (now.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
-      (now.getMonth() - TIMELINE_START.getMonth()) +
-      1
-    );
-  }
-  const d = new Date(to + "-01");
-  return (
-    (d.getFullYear() - TIMELINE_START.getFullYear()) * 12 +
-    (d.getMonth() - TIMELINE_START.getMonth()) +
-    1
-  );
-}
-
-// Year labels for the axis
-const yearLabels = [2024, 2025, 2026];
-
-// prompt data moved to PromptCompare component
 
 export function AboutSection() {
   const { locale } = useApp();
@@ -121,80 +96,47 @@ export function AboutSection() {
           <AIQuotes locale={locale} />
         </motion.div>
 
-        {/* Experience Timeline */}
+        {/* Experience — vertical timeline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.15 }}
+          transition={{ delay: 0.18 }}
           className="mt-8 sm:mt-10"
         >
-          <h3 className="flex items-center gap-2 font-heading text-lg font-semibold sm:text-xl">
-            <Briefcase className="h-5 w-5 text-muted-foreground" />
+          <h3 className="font-heading text-lg font-semibold sm:text-xl">
             {tr.about.experience}
           </h3>
 
-          <div className="mt-4 rounded-xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm sm:mt-5 sm:p-6">
-            {/* Single unified bar */}
-            <div className="relative h-8 w-full rounded-full bg-muted sm:h-10">
-              {timeline.map((entry, i) => {
-                const startOffset = monthDiff(entry.start);
-                const endOffset = monthDiffEnd(entry.end);
-                const leftPct = (startOffset / TOTAL_MONTHS) * 100;
-                const widthPct =
-                  ((endOffset - startOffset) / TOTAL_MONTHS) * 100;
+          <div className="relative mt-5 ml-3 border-l-2 border-border pl-6 sm:ml-4 sm:pl-8">
+            {timeline.map((entry, i) => (
+              <motion.div
+                key={entry.company}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 * i }}
+                className="relative mb-8 last:mb-0"
+              >
+                {/* Dot on the line */}
+                <span
+                  className={`absolute -left-[calc(1.5rem+5px)] top-1.5 h-3 w-3 rounded-full ${entry.dotColor} ring-4 ring-background sm:-left-[calc(2rem+5px)]`}
+                />
 
-                return (
-                  <motion.div
-                    key={entry.company}
-                    className={`group absolute top-0 flex h-full cursor-default items-center justify-center overflow-hidden rounded-full ${entry.color} shadow-sm`}
-                    style={{ left: `${leftPct}%` }}
-                    initial={{ width: 0, opacity: 0 }}
-                    whileInView={{ width: `${widthPct}%`, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 1,
-                      delay: 0.2 + 0.2 * i,
-                      ease: "easeOut",
-                    }}
-                  >
-                    <span className="truncate px-2 text-[9px] font-semibold text-white sm:text-[11px]">
-                      {entry.company}
+                {/* Content */}
+                <div className="rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:shadow-md sm:p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h4 className="text-base font-bold sm:text-lg">{entry.company}</h4>
+                    <span className="text-[11px] tabular-nums text-muted-foreground sm:text-xs">
+                      {formatDate(entry.start, locale)} — {formatDate(entry.end, locale)}
                     </span>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Year axis */}
-            <div className="relative mt-2 h-5 w-full">
-              {yearLabels.map((year) => {
-                const offset =
-                  ((year - TIMELINE_START.getFullYear()) * 12) / TOTAL_MONTHS;
-                return (
-                  <span
-                    key={year}
-                    className="absolute -translate-x-1/2 text-[10px] tabular-nums text-muted-foreground"
-                    style={{ left: `${offset * 100}%` }}
-                  >
-                    {year}
-                  </span>
-                );
-              })}
-            </div>
-
-            {/* Legend */}
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-border pt-3">
-              {timeline.map((entry) => (
-                <div key={entry.company} className="flex items-center gap-1.5">
-                  <span className={`h-2.5 w-2.5 rounded-full ${entry.color}`} />
-                  <span className="text-xs font-medium">{entry.company}</span>
-                  <span className="text-[10px] text-muted-foreground">
-                    — {entry.role[locale]}
-                  </span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {entry.role[locale]}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </div>

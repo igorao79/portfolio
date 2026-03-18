@@ -2,46 +2,34 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Home, ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="text-center">
-        {/* Animated pixel crab */}
+        {/* Logo */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="mb-8 flex justify-center"
         >
-          <motion.svg
-            width="80"
-            height="56"
-            viewBox="0 0 40 28"
-            fill="none"
+          <motion.div
             animate={{ rotate: [0, -5, 5, -5, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="h-20 w-20 overflow-hidden rounded-2xl shadow-xl sm:h-24 sm:w-24"
           >
-            {/* Body */}
-            <rect x="12" y="8" width="16" height="12" rx="3" fill="#e07850" />
-            {/* Eyes — sad, looking down */}
-            <rect x="16" y="12" width="3" height="3" fill="#1a1a1a" />
-            <rect x="22" y="12" width="3" height="3" fill="#1a1a1a" />
-            {/* Sad mouth */}
-            <path d="M18 18 Q20.5 16 23 18" stroke="#c0603a" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-            {/* Left claw — drooping */}
-            <rect x="4" y="10" width="8" height="4" rx="2" fill="#e07850" />
-            <rect x="4" y="8" width="4" height="4" rx="1" fill="#e07850" />
-            {/* Right claw — drooping */}
-            <rect x="28" y="10" width="8" height="4" rx="2" fill="#e07850" />
-            <rect x="32" y="8" width="4" height="4" rx="1" fill="#e07850" />
-            {/* Legs */}
-            <rect x="14" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-            <rect x="18" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-            <rect x="22" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-            <rect x="26" y="20" width="2" height="4" rx="1" fill="#c0603a" />
-          </motion.svg>
+            <Image
+              src="/igorlogo.webp"
+              alt="Logo"
+              width={96}
+              height={96}
+              className="h-full w-full object-cover dark:invert"
+              priority
+            />
+          </motion.div>
         </motion.div>
 
         {/* 404 number */}
@@ -86,10 +74,10 @@ export default function NotFound() {
           </div>
           <div className="p-3 text-left">
             <p className="font-mono text-xs text-red-400">
-              $ curl {typeof window !== "undefined" ? window.location.href : "/..."}
+              $ Error 404: Resource not found
             </p>
             <p className="mt-1 font-mono text-xs text-gray-400">
-              Error 404: The requested resource was not found.
+              The requested page does not exist.
             </p>
             <p className="font-mono text-xs text-gray-500">
               Try navigating back to the homepage.

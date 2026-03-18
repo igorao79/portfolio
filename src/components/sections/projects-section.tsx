@@ -141,12 +141,12 @@ export function ProjectsSection() {
               >
                 {/* Left: title + tags */}
                 <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <h3 className="font-heading text-xl font-black italic tracking-tight sm:text-3xl md:text-4xl">
                       {project.title}
                     </h3>
                     {project.commercial && (
-                      <span className="rounded-md bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400 sm:text-[10px]">
+                      <span className="rounded-md bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400 sm:text-[10px]">
                         Commercial
                       </span>
                     )}

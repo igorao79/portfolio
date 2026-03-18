@@ -7,6 +7,7 @@ import { HomeSection } from "@/components/sections/home-section";
 import { AboutSection } from "@/components/sections/about-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { ContactsSection } from "@/components/sections/contacts-section";
+import { FooterSection } from "@/components/sections/footer-section";
 import { ParticlesBg } from "@/components/particles-bg";
 import { Loader } from "@/components/loader";
 import { useApp } from "@/context/app-context";
@@ -28,6 +29,7 @@ export default function Page() {
             <AboutSection />
             <ProjectsSection />
             <ContactsSection />
+            <FooterSection />
           </main>
         </>
       )}
