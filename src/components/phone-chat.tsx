@@ -1,26 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Bot } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
-}
-
-function PhoneModel() {
-  const { scene } = useGLTF("/phone.glb");
-  return (
-    <primitive
-      object={scene}
-      scale={12}
-      position={[0, -1.5, 0]}
-      rotation={[0.1, -0.3, 0]}
-    />
-  );
 }
 
 function ChatUI({ locale }: { locale: string }) {
@@ -65,19 +51,16 @@ function ChatUI({ locale }: { locale: string }) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-white/10 bg-black/40 px-3 py-2 backdrop-blur-sm">
+      <div className="flex items-center gap-2 border-b border-white/10 bg-black/60 px-4 py-2.5 backdrop-blur-sm">
         <Bot className="h-4 w-4 text-emerald-400" />
         <span className="text-xs font-semibold text-white">Igor&apos;s AI</span>
         <span className="ml-auto text-[9px] text-emerald-400">online</span>
       </div>
 
       {/* Messages */}
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto p-3 space-y-2"
-      >
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2">
         {messages.length === 0 && (
-          <p className="mt-8 text-center text-[11px] text-gray-500">
+          <p className="mt-16 text-center text-[11px] text-gray-500">
             {locale === "ru" ? "Напишите что-нибудь..." : "Type something..."}
           </p>
         )}
@@ -87,7 +70,7 @@ function ChatUI({ locale }: { locale: string }) {
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] rounded-xl px-3 py-1.5 text-[11px] leading-relaxed ${
+              className={`max-w-[85%] rounded-2xl px-3 py-1.5 text-[11px] leading-relaxed ${
                 msg.role === "user"
                   ? "bg-blue-500 text-white"
                   : "bg-white/10 text-gray-200"
@@ -99,7 +82,7 @@ function ChatUI({ locale }: { locale: string }) {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-xl bg-white/10 px-3 py-1.5 text-[11px] text-gray-400">
+            <div className="rounded-2xl bg-white/10 px-3 py-1.5 text-[11px] text-gray-400">
               <span className="inline-flex gap-0.5">
                 <span className="animate-bounce">.</span>
                 <span className="animate-bounce" style={{ animationDelay: "0.1s" }}>.</span>
@@ -111,21 +94,21 @@ function ChatUI({ locale }: { locale: string }) {
       </div>
 
       {/* Input */}
-      <div className="border-t border-white/10 bg-black/40 p-2 backdrop-blur-sm">
+      <div className="border-t border-white/10 bg-black/60 p-2 backdrop-blur-sm">
         <div className="flex gap-1.5">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder={locale === "ru" ? "Сообщение..." : "Message..."}
-            className="flex-1 rounded-lg bg-white/10 px-2.5 py-1.5 text-[11px] text-white placeholder-gray-500 outline-none focus:ring-1 focus:ring-blue-500/50"
+            className="flex-1 rounded-xl bg-white/10 px-3 py-2 text-[11px] text-white placeholder-gray-500 outline-none focus:ring-1 focus:ring-blue-500/50"
           />
           <button
             onClick={sendMessage}
             disabled={loading || !input.trim()}
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500 text-white transition-all hover:bg-blue-600 disabled:opacity-40"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500 text-white transition-all hover:bg-blue-600 disabled:opacity-40"
           >
-            <Send className="h-3 w-3" />
+            <Send className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
@@ -149,52 +132,39 @@ export function PhoneChatModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 backdrop-blur-md"
           onClick={onClose}
         >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className="relative flex h-[85vh] max-h-[700px] w-[90vw] max-w-[900px] gap-4"
-            onClick={(e) => e.stopPropagation()}
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 z-[100] flex h-10 w-10 items-center justify-center rounded-full bg-white/10 border border-white/20 text-white shadow-lg transition-all hover:scale-110 hover:bg-white/20"
           >
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="absolute -right-2 -top-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-card border border-border shadow-lg transition-all hover:scale-110"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <X className="h-5 w-5" />
+          </button>
 
-            {/* 3D Phone */}
-            <div className="hidden w-1/2 items-center justify-center md:flex">
-              <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                <ambientLight intensity={0.8} />
-                <directionalLight position={[5, 5, 5]} intensity={1} />
-                <directionalLight position={[-5, -2, 3]} intensity={0.4} />
-                <Suspense fallback={null}>
-                  <PhoneModel />
-                </Suspense>
-                <OrbitControls
-                  enableZoom={false}
-                  enablePan={false}
-                  autoRotate
-                  autoRotateSpeed={1.5}
-                  minPolarAngle={Math.PI / 3}
-                  maxPolarAngle={Math.PI / 1.5}
-                />
-              </Canvas>
+          {/* iPhone-style phone frame */}
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0, y: 40 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.85, opacity: 0, y: 40 }}
+            transition={{ type: "spring", damping: 22, stiffness: 280 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative mx-4 flex h-[85vh] max-h-[700px] w-full max-w-[340px] flex-col overflow-hidden rounded-[3rem] border-[3px] border-gray-700 bg-black shadow-[0_0_80px_rgba(0,0,0,0.8),0_0_0_8px_rgba(30,30,30,1),0_0_0_10px_rgba(50,50,50,0.5)]"
+          >
+            {/* Top speaker / Dynamic Island */}
+            <div className="relative flex items-center justify-center bg-black pt-3 pb-1">
+              <div className="h-[22px] w-[90px] rounded-full bg-gray-900 ring-1 ring-gray-800" />
             </div>
 
-            {/* Chat window styled as phone screen */}
-            <div className="flex w-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-gray-900 to-black shadow-2xl md:w-1/2">
-              {/* Phone notch */}
-              <div className="flex items-center justify-center bg-black py-1.5">
-                <div className="h-1 w-16 rounded-full bg-gray-700" />
-              </div>
+            {/* Chat content fills the screen */}
+            <div className="flex-1 overflow-hidden bg-gradient-to-b from-gray-900 to-black">
               <ChatUI locale={locale} />
+            </div>
+
+            {/* Home indicator */}
+            <div className="flex items-center justify-center bg-black pb-2 pt-1">
+              <div className="h-[4px] w-28 rounded-full bg-gray-600" />
             </div>
           </motion.div>
         </motion.div>
