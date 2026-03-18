@@ -22,15 +22,15 @@ const timeline: TimelineEntry[] = [
     company: "RPT Team",
     role: { ru: "Fullstack-разработчик", en: "Fullstack Developer" },
     start: "2024-09",
-    end: "now",
+    end: "2025-12",
     color: "border-indigo-500",
     dotColor: "bg-indigo-500",
   },
   {
     company: "M.S.T",
     role: { ru: "Разработчик", en: "Developer" },
-    start: "2025-02",
-    end: "2025-03",
+    start: "2026-01",
+    end: "2026-03",
     color: "border-emerald-500",
     dotColor: "bg-emerald-500",
   },
@@ -109,33 +109,25 @@ export function AboutSection() {
             {tr.about.experience}
           </h3>
 
-          <div className="relative mt-5 ml-3 border-l-2 border-border pl-6 sm:ml-4 sm:pl-8">
+          <div className="mt-4 flex flex-col gap-3 sm:mt-5">
             {timeline.map((entry, i) => (
               <motion.div
                 key={entry.company}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 * i }}
-                className="relative mb-8 last:mb-0"
+                className="rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:shadow-md sm:p-5"
               >
-                {/* Dot on the line */}
-                <span
-                  className={`absolute -left-[calc(1.5rem+5px)] top-1.5 h-3 w-3 rounded-full ${entry.dotColor} ring-4 ring-background sm:-left-[calc(2rem+5px)]`}
-                />
-
-                {/* Content */}
-                <div className="rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:shadow-md sm:p-5">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h4 className="text-base font-bold sm:text-lg">{entry.company}</h4>
-                    <span className="text-[11px] tabular-nums text-muted-foreground sm:text-xs">
-                      {formatDate(entry.start, locale)} — {formatDate(entry.end, locale)}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {entry.role[locale]}
-                  </p>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h4 className="text-base font-bold sm:text-lg">{entry.company}</h4>
+                  <span className="text-[11px] tabular-nums text-muted-foreground sm:text-xs">
+                    {formatDate(entry.start, locale)} — {formatDate(entry.end, locale)}
+                  </span>
                 </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {entry.role[locale]}
+                </p>
               </motion.div>
             ))}
           </div>

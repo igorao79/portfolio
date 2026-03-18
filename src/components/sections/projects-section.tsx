@@ -3,7 +3,7 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { ArrowUpRight, GitCommitHorizontal } from "lucide-react";
+import { ArrowUpRight, GitCommitHorizontal, Github } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 import { ShinyText } from "@/components/ui/shiny-text";
@@ -184,6 +184,34 @@ export function ProjectsSection() {
             );
           })}
         </div>
+
+        {/* "More" GitHub link */}
+        <motion.a
+          href="https://github.com/igorao79"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.08 * projects.length }}
+          onMouseEnter={playHover}
+          className="group mt-3 flex items-center justify-between overflow-hidden rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-5"
+        >
+          <div className="flex items-center gap-3 sm:gap-4">
+            <h3 className="font-heading text-xl font-black italic tracking-tight sm:text-3xl md:text-4xl">
+              {locale === "ru" ? "БОЛЬШЕ" : "MORE"}
+            </h3>
+            <Github className="h-5 w-5 text-muted-foreground sm:h-6 sm:w-6" />
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground sm:block">
+              GitHub
+            </span>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border transition-all group-hover:bg-foreground sm:h-10 sm:w-10">
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all duration-300 group-hover:rotate-45 group-hover:text-background sm:h-5 sm:w-5" />
+            </div>
+          </div>
+        </motion.a>
       </div>
     </section>
   );
