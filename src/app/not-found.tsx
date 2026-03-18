@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { Home, ArrowLeft } from "lucide-react";
+import { Home } from "lucide-react";
 
 export default function NotFound() {
   return (
@@ -14,7 +14,7 @@ export default function NotFound() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="mb-4 flex justify-center"
+          className="mb-1 flex justify-center"
         >
           <motion.div
             animate={{ rotate: [0, -5, 5, -5, 0] }}
@@ -42,7 +42,7 @@ export default function NotFound() {
           404
         </motion.h1>
 
-        {/* Message */}
+        {/* Message — bilingual */}
         <motion.p
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -85,27 +85,20 @@ export default function NotFound() {
           </div>
         </motion.div>
 
-        {/* Action buttons */}
+        {/* Home button only */}
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-8 flex flex-wrap justify-center gap-3"
+          className="mt-8 flex justify-center"
         >
           <Link
             href="/"
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-md"
           >
             <Home className="h-4 w-4" />
-            На главную
+            На главную / Home
           </Link>
-          <button
-            onClick={() => history.back()}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-all hover:bg-muted"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Назад
-          </button>
         </motion.div>
       </div>
     </div>
