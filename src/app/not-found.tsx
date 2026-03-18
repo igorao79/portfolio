@@ -14,12 +14,12 @@ export default function NotFound() {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 flex justify-center"
+          className="mb-4 flex justify-center"
         >
           <motion.div
             animate={{ rotate: [0, -5, 5, -5, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="h-20 w-20 overflow-hidden rounded-2xl shadow-xl sm:h-24 sm:w-24"
+            className="h-20 w-20 overflow-hidden rounded-2xl sm:h-24 sm:w-24"
           >
             <Image
               src="/igorlogo.webp"

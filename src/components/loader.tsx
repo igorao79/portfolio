@@ -22,7 +22,7 @@ export function Loader() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="relative mb-8"
           >
-            <div className="h-20 w-20 overflow-hidden rounded-2xl shadow-xl sm:h-24 sm:w-24">
+            <div className="h-20 w-20 overflow-hidden rounded-2xl sm:h-24 sm:w-24">
               <Image
                 src="/igorlogo.webp"
                 alt="Logo"
