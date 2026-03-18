@@ -8,6 +8,7 @@ import { Send, Mail } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useHoverSound } from "@/hooks/use-hover-sound";
+import { ShinyText } from "@/components/ui/shiny-text";
 
 /* Custom hh.ru SVG icon — red circle with white "hh" */
 function HhIcon({ className }: { className?: string }) {
@@ -77,7 +78,7 @@ export function ContactsSection() {
           viewport={{ once: true }}
           className="text-center font-heading text-3xl font-bold tracking-tight sm:text-4xl"
         >
-          {tr.contacts.title}
+          <ShinyText>{tr.contacts.title}</ShinyText>
         </motion.h2>
 
         <motion.p

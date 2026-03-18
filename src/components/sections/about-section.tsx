@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 import { PromptCompare } from "@/components/prompt-compare";
+import { ShinyText } from "@/components/ui/shiny-text";
 
 interface TimelineEntry {
   company: string;
@@ -61,7 +62,7 @@ export function AboutSection() {
           viewport={{ once: true }}
         >
           <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
-            {tr.about.title}
+            <ShinyText>{tr.about.title}</ShinyText>
           </h2>
         </motion.div>
 

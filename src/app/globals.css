@@ -152,6 +152,158 @@
   animation: sound-bar-4 0.7s ease-in-out infinite;
 }
 
+/* ── Shiny Text Effect ── */
+@keyframes shiny-sweep {
+  0%   { background-position: -40rem 0; }
+  30%  { background-position: -40rem 0; }
+  100% { background-position: 25rem 0; }
+}
+
+@keyframes shiny-flash {
+  0%   { opacity: 1; }
+  8%   { opacity: 0.7; }
+  16%  { opacity: 1; }
+  24%  { opacity: 0.8; }
+  32%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.shiny-text {
+  display: inline-block;
+  position: relative;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: transparent;
+  background-image:
+    radial-gradient(
+      ellipse farthest-corner at right bottom,
+      white 0%,
+      #a1a1aa 20%,
+      #71717a 60%,
+      transparent 80%
+    ),
+    radial-gradient(
+      ellipse farthest-corner at left top,
+      white 0%,
+      #52525b 50%,
+      #3f3f46 75%,
+      #27272a 100%
+    );
+  background-size: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.dark .shiny-text {
+  background-image:
+    radial-gradient(
+      ellipse farthest-corner at right bottom,
+      white 0%,
+      #e4e4e7 20%,
+      #d4d4d8 60%,
+      transparent 80%
+    ),
+    radial-gradient(
+      ellipse farthest-corner at left top,
+      white 0%,
+      #a1a1aa 50%,
+      #d4d4d8 75%,
+      #fafafa 100%
+    );
+}
+
+/* Depth shadow */
+.shiny-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  color: #a1a1aa;
+  text-shadow:
+    0 1px 0 #71717a,
+    0 2px 0 #52525b,
+    0 3px 2px rgba(0, 0, 0, 0.15),
+    0 0.05em 0.08em rgba(0, 0, 0, 0.1);
+}
+
+.dark .shiny-text::before {
+  color: #52525b;
+  text-shadow:
+    0 1px 0 #3f3f46,
+    0 2px 0 #27272a,
+    0 3px 2px rgba(0, 0, 0, 0.4),
+    0 0.05em 0.08em rgba(0, 0, 0, 0.3);
+}
+
+/* Shine inner layer */
+.shiny-text__inner {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  color: inherit;
+  background: inherit;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+/* Sweep animation */
+.shiny-text__inner::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  background-image:
+    linear-gradient(
+      100deg,
+      transparent 0%,
+      transparent 5rem,
+      white 9rem,
+      transparent 9.1rem,
+      transparent 13rem,
+      rgba(255,255,255,0.3) 17rem,
+      transparent 21rem,
+      transparent 23rem,
+      rgba(255,255,255,0.5) 27rem,
+      white 28rem,
+      rgba(255,255,255,0.3) 28.1rem,
+      transparent 32rem,
+      transparent 100%
+    );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-size: 50rem 100%;
+  background-repeat: no-repeat;
+  animation: shiny-sweep 6s ease-in-out infinite alternate;
+}
+
+/* Flash overlay */
+.shiny-text__inner::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  color: transparent;
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.2) 0%,
+      transparent 35%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shiny-flash 8s ease-in-out infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -5,6 +5,7 @@ import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { RotatingText } from "@/components/ui/rotating-text";
+import { ShinyText } from "@/components/ui/shiny-text";
 
 export function HomeSection() {
   const { locale } = useApp();
@@ -65,7 +66,7 @@ export function HomeSection() {
             {tr.home.role}
           </p>
           <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:text-5xl md:text-6xl lg:text-7xl">
-            {tr.home.name}
+            <ShinyText>{tr.home.name}</ShinyText>
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
             {tr.home.descriptionPrefix}{" "}

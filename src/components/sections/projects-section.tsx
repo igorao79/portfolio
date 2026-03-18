@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, GitCommitHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHoverSound } from "@/hooks/use-hover-sound";
+import { ShinyText } from "@/components/ui/shiny-text";
 
 interface Project {
   title: string;
@@ -120,7 +121,7 @@ export function ProjectsSection() {
           viewport={{ once: true }}
           className="font-heading text-3xl font-bold tracking-tight sm:text-4xl"
         >
-          {tr.projects.title}
+          <ShinyText>{tr.projects.title}</ShinyText>
         </motion.h2>
 
         <div className="mt-6 flex flex-col gap-3 sm:mt-8">
