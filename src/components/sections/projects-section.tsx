@@ -78,33 +78,50 @@ export function ProjectsSection() {
   const [commits, setCommits] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    const CACHE_KEY = "gh_commits";
+    const CACHE_TTL = 1000 * 60 * 30; // 30 min
+
+    // Try reading from sessionStorage cache first
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { data, ts } = JSON.parse(cached);
+        if (Date.now() - ts < CACHE_TTL) {
+          setCommits(data);
+          return;
+        }
+      }
+    } catch { /* ignore */ }
+
     const fetchCommits = async () => {
       const results: Record<string, number> = {};
-      await Promise.allSettled(
-        projects
-          .filter((p) => p.repo)
-          .map(async (p) => {
-            try {
-              const res = await fetch(
-                `https://api.github.com/repos/${p.repo}/commits?per_page=1`,
-                { headers: { Accept: "application/vnd.github.v3+json" } }
-              );
-              const link = res.headers.get("Link");
-              if (link) {
-                const match = link.match(/page=(\d+)>; rel="last"/);
-                if (match) {
-                  results[p.repo!] = parseInt(match[1], 10);
-                }
-              } else {
-                const data = await res.json();
-                results[p.repo!] = Array.isArray(data) ? data.length : 0;
-              }
-            } catch {
-              // silently ignore
-            }
-          })
-      );
-      setCommits(results);
+      // Sequential with small delay to avoid rate limits
+      for (const p of projects.filter((p) => p.repo)) {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${p.repo}/commits?per_page=1`,
+            { headers: { Accept: "application/vnd.github.v3+json" } }
+          );
+          if (res.status === 403 || res.status === 429) break; // rate limited, stop
+          if (!res.ok) continue;
+          const link = res.headers.get("Link");
+          if (link) {
+            const match = link.match(/page=(\d+)>; rel="last"/);
+            if (match) results[p.repo!] = parseInt(match[1], 10);
+          } else {
+            const data = await res.json();
+            results[p.repo!] = Array.isArray(data) ? data.length : 0;
+          }
+          // Small delay between requests
+          await new Promise((r) => setTimeout(r, 200));
+        } catch { /* ignore */ }
+      }
+      if (Object.keys(results).length > 0) {
+        setCommits(results);
+        try {
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data: results, ts: Date.now() }));
+        } catch { /* ignore */ }
+      }
     };
     fetchCommits();
   }, []);

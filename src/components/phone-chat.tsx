@@ -240,7 +240,7 @@ export function PhoneChatModal({
             exit={{ scale: 0.85, opacity: 0, y: 40 }}
             transition={{ type: "spring", damping: 22, stiffness: 280 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative mx-4 flex h-[90vh] max-h-[780px] w-full max-w-[380px] flex-col overflow-hidden rounded-[3rem] border-[3px] border-border bg-card shadow-2xl"
+            className="relative mx-2 flex h-[80vh] max-h-[780px] w-[calc(100vw-1rem)] max-w-[380px] flex-col overflow-hidden rounded-[2rem] border-[3px] border-border bg-card shadow-2xl sm:mx-4 sm:h-[90vh] sm:rounded-[3rem]"
           >
             <div className="relative flex items-center justify-center bg-card pt-3 pb-1">
               <div className="h-[22px] w-[90px] rounded-full bg-foreground/10 ring-1 ring-border" />
