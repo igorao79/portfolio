@@ -3,11 +3,13 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, MessageCircle } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 import { PromptCompare } from "@/components/prompt-compare";
 import { ShinyText } from "@/components/ui/shiny-text";
 import { useHoverSound } from "@/hooks/use-hover-sound";
+import { PhoneChatModal } from "@/components/phone-chat";
+import { useState } from "react";
 
 interface TimelineEntry {
   company: string;
@@ -53,6 +55,7 @@ export function AboutSection() {
   const { locale } = useApp();
   const tr = t(locale);
   const playHover = useHoverSound();
+  const [chatOpen, setChatOpen] = useState(false);
 
   return (
     <section
@@ -106,7 +109,21 @@ export function AboutSection() {
 
           {/* Animated prompt comparison */}
           <PromptCompare locale={locale} />
+
+          {/* Try it yourself button */}
+          <div className="mt-5 flex justify-center border-t border-border pt-5">
+            <button
+              onClick={() => setChatOpen(true)}
+              onMouseEnter={playHover}
+              className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-all hover:scale-105 hover:border-primary/30 hover:shadow-md"
+            >
+              <MessageCircle className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
+              {locale === "ru" ? "Попробуй сам" : "Try it yourself"}
+            </button>
+          </div>
         </motion.div>
+
+        <PhoneChatModal open={chatOpen} onClose={() => setChatOpen(false)} locale={locale} />
 
         {/* AI Quotes */}
         <motion.div
