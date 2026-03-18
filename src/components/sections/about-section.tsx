@@ -7,6 +7,7 @@ import { Sparkles } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 import { PromptCompare } from "@/components/prompt-compare";
 import { ShinyText } from "@/components/ui/shiny-text";
+import { useHoverSound } from "@/hooks/use-hover-sound";
 
 interface TimelineEntry {
   company: string;
@@ -15,6 +16,7 @@ interface TimelineEntry {
   end: string;
   color: string;
   dotColor: string;
+  url: string;
 }
 
 const timeline: TimelineEntry[] = [
@@ -25,6 +27,7 @@ const timeline: TimelineEntry[] = [
     end: "2025-12",
     color: "border-indigo-500",
     dotColor: "bg-indigo-500",
+    url: "https://vk.com/rptcompany",
   },
   {
     company: "M.S.T.",
@@ -33,6 +36,7 @@ const timeline: TimelineEntry[] = [
     end: "2026-03",
     color: "border-emerald-500",
     dotColor: "bg-emerald-500",
+    url: "https://agency-mst.com/",
   },
 ];
 
@@ -48,6 +52,7 @@ function formatDate(d: string, locale: string): string {
 export function AboutSection() {
   const { locale } = useApp();
   const tr = t(locale);
+  const playHover = useHoverSound();
 
   return (
     <section
@@ -82,6 +87,23 @@ export function AboutSection() {
             {tr.about.bioStory}
           </p>
 
+          {/* Manifesto */}
+          <div className="mt-5 border-t border-border pt-5">
+            <p className="text-center text-base font-bold leading-snug sm:text-lg">
+              {locale === "ru" ? (
+                <>
+                  Не бездумный промптинг —<br />
+                  <span className="text-muted-foreground">а осознанная разработка с ИИ.</span>
+                </>
+              ) : (
+                <>
+                  Not mindless prompting —<br />
+                  <span className="text-muted-foreground">but intentional development with AI.</span>
+                </>
+              )}
+            </p>
+          </div>
+
           {/* Animated prompt comparison */}
           <PromptCompare locale={locale} />
         </motion.div>
@@ -97,7 +119,7 @@ export function AboutSection() {
           <AIQuotes locale={locale} />
         </motion.div>
 
-        {/* Experience — vertical timeline */}
+        {/* Experience */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -111,16 +133,22 @@ export function AboutSection() {
 
           <div className="mt-4 flex flex-col gap-3 sm:mt-5">
             {timeline.map((entry, i) => (
-              <motion.div
+              <motion.a
                 key={entry.company}
+                href={entry.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 * i }}
-                className="rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:shadow-md sm:p-5"
+                onMouseEnter={playHover}
+                className="group cursor-pointer rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-md sm:p-5"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-base font-bold sm:text-lg">{entry.company}</h4>
+                  <h4 className="text-base font-bold transition-colors group-hover:text-primary sm:text-lg">
+                    {entry.company}
+                  </h4>
                   <span className="text-[11px] tabular-nums text-muted-foreground sm:text-xs">
                     {formatDate(entry.start, locale)} — {formatDate(entry.end, locale)}
                   </span>
@@ -128,7 +156,7 @@ export function AboutSection() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   {entry.role[locale]}
                 </p>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </motion.div>
