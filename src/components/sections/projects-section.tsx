@@ -195,7 +195,7 @@ export function ProjectsSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.08 * projects.length }}
           onMouseEnter={playHover}
-          className="group mt-3 flex items-center justify-between overflow-hidden rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-5"
+          className="group mt-3 flex items-center justify-between overflow-hidden rounded-xl border-2 border-dashed border-muted-foreground/30 bg-transparent px-4 py-3.5 transition-all hover:scale-[1.02] hover:border-foreground/50 hover:bg-card hover:shadow-xl sm:px-8 sm:py-5"
         >
           <div className="flex items-center gap-3 sm:gap-4">
             <h3 className="font-heading text-xl font-black italic tracking-tight sm:text-3xl md:text-4xl">
