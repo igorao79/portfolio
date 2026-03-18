@@ -2,22 +2,104 @@
 
 import { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot } from "lucide-react";
+import { X, Send, Bot, Copy, Check } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
 
+/* ── Typing emulation for bot messages ── */
+function TypingMessage({ content, onDone }: { content: string; onDone: () => void }) {
+  const [displayed, setDisplayed] = useState("");
+  const idx = useRef(0);
+
+  useEffect(() => {
+    idx.current = 0;
+    setDisplayed("");
+    const interval = setInterval(() => {
+      idx.current++;
+      if (idx.current >= content.length) {
+        setDisplayed(content);
+        clearInterval(interval);
+        onDone();
+      } else {
+        setDisplayed(content.slice(0, idx.current));
+      }
+    }, 12); // ~12ms per char ≈ fast typing
+    return () => clearInterval(interval);
+  }, [content, onDone]);
+
+  return <MessageContent content={displayed} isBot />;
+}
+
+/* ── Render message with code blocks ── */
+function MessageContent({ content, isBot }: { content: string; isBot: boolean }) {
+  const [copied, setCopied] = useState<number | null>(null);
+
+  if (!isBot) {
+    return <span className="select-text whitespace-pre-wrap break-words">{content}</span>;
+  }
+
+  // Split by code blocks: ```lang\n...\n```
+  const parts = content.split(/(```[\s\S]*?```)/g);
+
+  const handleCopy = (code: string, i: number) => {
+    navigator.clipboard.writeText(code).catch(() => {});
+    setCopied(i);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
+  return (
+    <span className="select-text whitespace-pre-wrap break-words">
+      {parts.map((part, i) => {
+        if (part.startsWith("```")) {
+          // Extract language and code
+          const match = part.match(/^```(\w*)\n?([\s\S]*?)```$/);
+          const lang = match?.[1] || "";
+          const code = match?.[2]?.trim() || part.slice(3, -3).trim();
+
+          return (
+            <span key={i} className="my-1.5 block">
+              {/* Code header */}
+              <span className="flex items-center justify-between rounded-t-lg bg-foreground/10 px-2.5 py-1">
+                <span className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
+                  {lang || "code"}
+                </span>
+                <button
+                  onClick={() => handleCopy(code, i)}
+                  className="flex items-center gap-1 text-[9px] text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {copied === i ? (
+                    <Check className="h-2.5 w-2.5" />
+                  ) : (
+                    <Copy className="h-2.5 w-2.5" />
+                  )}
+                </button>
+              </span>
+              {/* Code body */}
+              <span className="block overflow-x-auto rounded-b-lg bg-foreground/5 p-2.5 font-mono text-[10px] leading-relaxed">
+                {code}
+              </span>
+            </span>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </span>
+  );
+}
+
 function ChatUI({ locale }: { locale: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [typingIdx, setTypingIdx] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+  }, [messages, typingIdx]);
 
   const sendMessage = useCallback(async () => {
     if (!input.trim() || loading) return;
@@ -34,15 +116,11 @@ function ChatUI({ locale }: { locale: string }) {
         body: JSON.stringify({ messages: newMessages }),
       });
       const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.reply || data.error || "..." },
-      ]);
+      const reply = data.reply || data.error || "...";
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      setTypingIdx(newMessages.length); // index of the new bot message
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Connection error" },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Connection error" }]);
     } finally {
       setLoading(false);
     }
@@ -70,13 +148,20 @@ function ChatUI({ locale }: { locale: string }) {
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-3 py-1.5 text-[11px] leading-relaxed ${
+              className={`max-w-[85%] overflow-hidden rounded-2xl px-3 py-1.5 text-[11px] leading-relaxed ${
                 msg.role === "user"
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-foreground"
               }`}
             >
-              {msg.content}
+              {msg.role === "assistant" && typingIdx === i ? (
+                <TypingMessage
+                  content={msg.content}
+                  onDone={() => setTypingIdx(null)}
+                />
+              ) : (
+                <MessageContent content={msg.content} isBot={msg.role === "assistant"} />
+              )}
             </div>
           </div>
         ))}
@@ -125,7 +210,6 @@ export function PhoneChatModal({
   onClose: () => void;
   locale: string;
 }) {
-  // Lock body scroll when modal is open
   useLayoutEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -143,7 +227,6 @@ export function PhoneChatModal({
           className="fixed inset-0 z-[200] flex items-center justify-center bg-background/80 backdrop-blur-md"
           onClick={onClose}
         >
-          {/* Close */}
           <button
             onClick={onClose}
             className="absolute right-4 top-4 z-[210] flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-lg transition-all hover:scale-110"
@@ -151,7 +234,6 @@ export function PhoneChatModal({
             <X className="h-5 w-5" />
           </button>
 
-          {/* iPhone-style phone frame — theme aware, bigger */}
           <motion.div
             initial={{ scale: 0.85, opacity: 0, y: 40 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -160,17 +242,14 @@ export function PhoneChatModal({
             onClick={(e) => e.stopPropagation()}
             className="relative mx-4 flex h-[90vh] max-h-[780px] w-full max-w-[380px] flex-col overflow-hidden rounded-[3rem] border-[3px] border-border bg-card shadow-2xl"
           >
-            {/* Dynamic Island */}
             <div className="relative flex items-center justify-center bg-card pt-3 pb-1">
               <div className="h-[22px] w-[90px] rounded-full bg-foreground/10 ring-1 ring-border" />
             </div>
 
-            {/* Chat screen */}
             <div className="flex-1 overflow-hidden bg-background">
               <ChatUI locale={locale} />
             </div>
 
-            {/* Home indicator */}
             <div className="flex items-center justify-center bg-card pb-2 pt-1">
               <div className="h-[4px] w-28 rounded-full bg-foreground/20" />
             </div>
