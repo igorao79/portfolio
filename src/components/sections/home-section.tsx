@@ -6,6 +6,7 @@ import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { RotatingText } from "@/components/ui/rotating-text";
 import { ShinyText } from "@/components/ui/shiny-text";
+import { SparklesText, Marquee } from "@igorao79/uivix";
 
 export function HomeSection() {
   const { locale } = useApp();
@@ -66,7 +67,16 @@ export function HomeSection() {
             {tr.home.role}
           </p>
           <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:text-5xl md:text-6xl lg:text-7xl">
-            <ShinyText>{tr.home.name}</ShinyText>
+            <SparklesText
+              sparkleColor="currentColor"
+              count={6}
+              minSize={8}
+              maxSize={18}
+              speed={500}
+              className="font-heading"
+            >
+              {tr.home.name}
+            </SparklesText>
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
             {tr.home.descriptionPrefix}{" "}
@@ -79,6 +89,17 @@ export function HomeSection() {
             {tr.home.descriptionSuffix}
           </p>
         </motion.div>
+      </div>
+
+      {/* Tech marquee at bottom */}
+      <div className="absolute inset-x-0 bottom-8 opacity-30 sm:bottom-12">
+        <Marquee speed={40} pauseOnHover fade>
+          {["React", "Next.js", "TypeScript", "Node.js", "Python", "Tailwind CSS", "PostgreSQL", "Docker", "Git", "Claude Code", "Cursor"].map((tech) => (
+            <span key={tech} className="mx-6 text-sm font-medium tracking-wider text-muted-foreground sm:mx-8 sm:text-base">
+              {tech}
+            </span>
+          ))}
+        </Marquee>
       </div>
     </section>
   );

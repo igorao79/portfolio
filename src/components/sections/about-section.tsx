@@ -115,7 +115,7 @@ export function AboutSection() {
             <button
               onClick={() => setChatOpen(true)}
               onMouseEnter={playHover}
-              className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-all hover:scale-105 hover:border-primary/30 hover:shadow-md"
+              className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-all hover:scale-105 hover:border-primary/30 hover:shadow-md"
             >
               <MessageCircle className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
               {locale === "ru" ? "Попробуй сам" : "Try it yourself"}

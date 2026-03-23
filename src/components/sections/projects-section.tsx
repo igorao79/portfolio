@@ -7,6 +7,7 @@ import { ArrowUpRight, GitCommitHorizontal, Github } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 import { ShinyText } from "@/components/ui/shiny-text";
+import { Card } from "@igorao79/uivix";
 
 interface Project {
   title: string;
@@ -145,17 +146,20 @@ export function ProjectsSection() {
           {projects.map((project, i) => {
             const commitCount = project.repo ? commits[project.repo] : null;
             return (
-              <motion.a
+              <motion.div
                 key={project.title}
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.08 * i }}
+              >
+              <Card variant="spotlight" className="overflow-hidden rounded-xl border-border p-0">
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 onMouseEnter={playHover}
-                className="group flex items-center justify-between overflow-hidden rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm transition-all hover:scale-[1.02] hover:shadow-xl sm:px-8 sm:py-5"
+                className="group flex items-center justify-between px-4 py-3.5 transition-all sm:px-8 sm:py-5"
               >
                 {/* Left: title + tags */}
                 <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
@@ -197,7 +201,9 @@ export function ProjectsSection() {
                     <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all duration-300 group-hover:rotate-45 group-hover:text-background sm:h-5 sm:w-5" />
                   </div>
                 </div>
-              </motion.a>
+              </a>
+              </Card>
+              </motion.div>
             );
           })}
         </div>

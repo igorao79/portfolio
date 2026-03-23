@@ -304,6 +304,14 @@
   animation: shiny-flash 8s ease-in-out infinite;
 }
 
+/* Override uivix Card spotlight color per theme */
+.uixy-card-spotlight::before {
+  background: radial-gradient(600px circle at var(--uixy-mx) var(--uixy-my), rgba(0,0,0,0.08), transparent 40%) !important;
+}
+.dark .uixy-card-spotlight::before {
+  background: radial-gradient(600px circle at var(--uixy-mx) var(--uixy-my), rgba(255,255,255,0.08), transparent 40%) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

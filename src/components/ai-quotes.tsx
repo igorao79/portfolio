@@ -104,13 +104,13 @@ export function AIQuotes({ locale }: { locale: Locale }) {
         <div className="flex items-center gap-1">
           <button
             onClick={prev}
-            className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="cursor-pointer rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
           <button
             onClick={next}
-            className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="cursor-pointer rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -154,7 +154,7 @@ export function AIQuotes({ locale }: { locale: Locale }) {
               setDirection(i > current ? 1 : -1);
               setCurrent(i);
             }}
-            className={`h-1.5 rounded-full transition-all ${
+            className={`h-1.5 cursor-pointer rounded-full transition-all ${
               i === current
                 ? "w-4 bg-foreground"
                 : "w-1.5 bg-muted-foreground/30"
