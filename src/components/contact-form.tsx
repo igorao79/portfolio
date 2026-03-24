@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ContactFormProps {
   open: boolean;
@@ -10,17 +11,23 @@ interface ContactFormProps {
   locale: string;
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 export function ContactFormModal({ open, onClose, locale }: ContactFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
   const [telegram, setTelegram] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const isRu = locale === "ru";
 
+  const emailValid = useMemo(() => EMAIL_REGEX.test(email.trim()), [email]);
+  const formValid = name.trim().length > 0 && emailValid && message.trim().length > 0;
+
   const handleSubmit = useCallback(async () => {
-    if (!name.trim() || !email.trim() || !message.trim()) return;
+    if (!formValid) return;
     setStatus("sending");
 
     try {
@@ -42,16 +49,21 @@ export function ContactFormModal({ open, onClose, locale }: ContactFormProps) {
           setStatus("idle");
           setName("");
           setEmail("");
+          setEmailTouched(false);
           setTelegram("");
           setMessage("");
         }, 2000);
       } else {
         setStatus("error");
+        setTimeout(() => setStatus("idle"), 3000);
       }
     } catch {
       setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
     }
-  }, [name, email, telegram, message, onClose]);
+  }, [formValid, name, email, telegram, message, onClose]);
+
+  const showEmailError = emailTouched && email.trim().length > 0 && !emailValid;
 
   return (
     <AnimatePresence>
@@ -97,14 +109,27 @@ export function ContactFormModal({ open, onClose, locale }: ContactFormProps) {
                 className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
               />
 
-              {/* Email */}
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder={isRu ? "Email для связи *" : "Your email *"}
-                className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none transition-all focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
-              />
+              {/* Email with validation */}
+              <div>
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => setEmailTouched(true)}
+                  type="email"
+                  placeholder={isRu ? "Email для связи *" : "Your email *"}
+                  className={cn(
+                    "w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none transition-all focus:ring-1",
+                    showEmailError
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/30"
+                      : "border-border focus:border-primary/50 focus:ring-primary/30"
+                  )}
+                />
+                {showEmailError && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {isRu ? "Неверный формат email" : "Invalid email format"}
+                  </p>
+                )}
+              </div>
 
               {/* Telegram */}
               <input
@@ -126,13 +151,7 @@ export function ContactFormModal({ open, onClose, locale }: ContactFormProps) {
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                disabled={
-                  status === "sending" ||
-                  status === "sent" ||
-                  !name.trim() ||
-                  !email.trim() ||
-                  !message.trim()
-                }
+                disabled={!formValid || status === "sending" || status === "sent"}
                 className="mt-1 flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {status === "idle" && (

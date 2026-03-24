@@ -74,7 +74,7 @@ export function ContactsSection() {
   return (
     <section
       id="contacts"
-      className="relative flex min-h-screen items-center justify-center px-4 pb-24 pt-20 sm:px-6 sm:py-24 md:pb-24"
+      className="relative flex items-center justify-center px-4 pb-24 pt-16 sm:min-h-screen sm:px-6 sm:py-24 md:pb-24"
     >
       <div className="relative z-10 w-full max-w-4xl">
         <motion.h2
@@ -102,7 +102,7 @@ export function ContactsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="mt-10 grid grid-cols-3 overflow-hidden rounded-2xl border border-border shadow-lg sm:mt-14"
+          className="mt-10 grid grid-cols-1 overflow-hidden rounded-2xl border border-border shadow-lg sm:mt-14 sm:grid-cols-3"
         >
           {contacts.map(({ id, icon: Icon, href, action, bg }, i) => {
             const label = tr.contacts[id as keyof typeof tr.contacts] || id;
@@ -110,10 +110,10 @@ export function ContactsSection() {
             const otherHovered = hoveredIndex !== null && hoveredIndex !== i;
 
             const className = cn(
-              "relative flex cursor-pointer flex-col items-center justify-center gap-3 py-12 transition-all duration-500 sm:gap-4 sm:py-20",
+              "relative flex cursor-pointer flex-col items-center justify-center gap-2 py-6 transition-all duration-500 sm:gap-4 sm:py-20",
               isHovered ? bg : "bg-card",
               otherHovered ? "opacity-30" : "opacity-100",
-              i < contacts.length - 1 && "border-r border-border"
+              i < contacts.length - 1 && "border-b border-border sm:border-b-0 sm:border-r"
             );
 
             const inner = (

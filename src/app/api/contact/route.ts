@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       "",
       `👤 <b>Имя:</b> ${escapeHtml(name)}`,
       `📧 <b>Email:</b> ${escapeHtml(email)}`,
-      telegram ? `💬 <b>Telegram:</b> ${escapeHtml(telegram)}` : "",
+      telegram ? `💬 <b>Telegram:</b> @${escapeHtml(telegram.replace(/^@/, ""))}` : "",
       "",
       `📝 <b>Сообщение:</b>`,
       escapeHtml(message),
