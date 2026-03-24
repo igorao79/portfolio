@@ -4,13 +4,13 @@ import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { Send, Mail } from "lucide-react";
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 import { ShinyText } from "@/components/ui/shiny-text";
+import { ContactFormModal } from "@/components/contact-form";
 
-/* Custom hh.ru SVG icon — red circle with white "hh" */
+/* Custom hh.ru SVG icon */
 function HhIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -35,27 +35,32 @@ function HhIcon({ className }: { className?: string }) {
   );
 }
 
-const contacts = [
+interface ContactItem {
+  id: string;
+  icon: React.ElementType;
+  href?: string;
+  action?: "form";
+  bg: string;
+}
+
+const contacts: ContactItem[] = [
   {
     id: "telegram",
     icon: Send,
     href: "https://t.me/igorao79",
     bg: "bg-[#2AABEE]",
-    hoverText: "",
   },
   {
     id: "email",
     icon: Mail,
-    href: "mailto:igoraor79@gmail.com",
+    action: "form",
     bg: "bg-[#EA4335]",
-    hoverText: "",
   },
   {
     id: "hh",
     icon: HhIcon,
     href: "https://tula.hh.ru/resume/e14005b2ff0f3c33320039ed1f6d774c5a6458",
     bg: "bg-[#D6001C]",
-    hoverText: "",
   },
 ];
 
@@ -63,6 +68,7 @@ export function ContactsSection() {
   const { locale } = useApp();
   const tr = t(locale);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
   const playHover = useHoverSound();
 
   return (
@@ -70,7 +76,6 @@ export function ContactsSection() {
       id="contacts"
       className="relative flex min-h-screen items-center justify-center px-4 pb-24 pt-20 sm:px-6 sm:py-24 md:pb-24"
     >
-
       <div className="relative z-10 w-full max-w-4xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -99,26 +104,20 @@ export function ContactsSection() {
           transition={{ delay: 0.2 }}
           className="mt-10 grid grid-cols-3 overflow-hidden rounded-2xl border border-border shadow-lg sm:mt-14"
         >
-          {contacts.map(({ id, icon: Icon, href, bg, hoverText }, i) => {
+          {contacts.map(({ id, icon: Icon, href, action, bg }, i) => {
             const label = tr.contacts[id as keyof typeof tr.contacts] || id;
             const isHovered = hoveredIndex === i;
             const otherHovered = hoveredIndex !== null && hoveredIndex !== i;
 
-            return (
-              <a
-                key={id}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                onMouseEnter={() => { setHoveredIndex(i); playHover(); }}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className={cn(
-                  "relative flex flex-col items-center justify-center gap-3 py-12 transition-all duration-500 sm:gap-4 sm:py-20",
-                  isHovered ? `${bg} ${hoverText}` : "bg-card",
-                  otherHovered ? "opacity-30" : "opacity-100",
-                  i < contacts.length - 1 && "border-r border-border"
-                )}
-              >
+            const className = cn(
+              "relative flex cursor-pointer flex-col items-center justify-center gap-3 py-12 transition-all duration-500 sm:gap-4 sm:py-20",
+              isHovered ? bg : "bg-card",
+              otherHovered ? "opacity-30" : "opacity-100",
+              i < contacts.length - 1 && "border-r border-border"
+            );
+
+            const inner = (
+              <>
                 <Icon
                   className={cn(
                     "h-8 w-8 transition-all duration-500 sm:h-12 sm:w-12",
@@ -135,21 +134,48 @@ export function ContactsSection() {
                 >
                   {label}
                 </span>
-
-                {/* Hover glow effect */}
                 {isHovered && (
-                  <div
-                    className={cn(
-                      "absolute inset-0 opacity-20 blur-3xl",
-                      bg
-                    )}
-                  />
+                  <div className={cn("absolute inset-0 opacity-20 blur-3xl", bg)} />
                 )}
+              </>
+            );
+
+            if (action === "form") {
+              return (
+                <button
+                  key={id}
+                  onClick={() => setFormOpen(true)}
+                  onMouseEnter={() => { setHoveredIndex(i); playHover(); }}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  className={className}
+                >
+                  {inner}
+                </button>
+              );
+            }
+
+            return (
+              <a
+                key={id}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onMouseEnter={() => { setHoveredIndex(i); playHover(); }}
+                onMouseLeave={() => setHoveredIndex(null)}
+                className={className}
+              >
+                {inner}
               </a>
             );
           })}
         </motion.div>
       </div>
+
+      <ContactFormModal
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        locale={locale}
+      />
     </section>
   );
 }
