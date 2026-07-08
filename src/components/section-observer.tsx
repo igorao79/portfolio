@@ -9,6 +9,10 @@ export function SectionObserver() {
   const { setActiveSection } = useApp();
 
   useEffect(() => {
+    // Scrollspy: a thin band across the vertical centre of the viewport.
+    // Whichever section crosses that band is the active one — this stays
+    // correct even for sections taller than the viewport (a fixed threshold
+    // like 0.4 can never be reached by a very tall section).
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -17,7 +21,7 @@ export function SectionObserver() {
           }
         }
       },
-      { threshold: 0.4 }
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
     );
 
     for (const id of sectionIds) {

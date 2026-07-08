@@ -11,12 +11,14 @@ interface AnimatedThemeTogglerProps {
   className?: string;
   /** Render as button (default) or div (when inside another button) */
   as?: "button" | "div";
+  onMouseEnter?: () => void;
 }
 
 export const AnimatedThemeToggler = ({
   className,
   duration = 400,
   as: Tag = "button",
+  onMouseEnter,
 }: AnimatedThemeTogglerProps) => {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -103,6 +105,7 @@ export const AnimatedThemeToggler = ({
         className
       )}
       onClick={toggleTheme}
+      onMouseEnter={onMouseEnter}
     >
       {icons}
     </Tag>

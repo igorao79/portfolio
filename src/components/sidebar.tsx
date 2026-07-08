@@ -106,6 +106,7 @@ export function Sidebar() {
 
         {/* Animated theme toggle — standalone, no tooltip wrapper to avoid nested button */}
         <AnimatedThemeToggler
+          onMouseEnter={playHover}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card shadow-sm transition-all hover:scale-110 hover:shadow-md lg:h-11 lg:w-11"
         />
       </aside>
@@ -148,7 +149,7 @@ export function Sidebar() {
           <span className="text-sm font-bold">{locale === "ru" ? "EN" : "RU"}</span>
         </button>
 
-        <AnimatedThemeToggler className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors" />
+        <AnimatedThemeToggler onMouseEnter={playHover} className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors" />
       </nav>
     </>
   );
