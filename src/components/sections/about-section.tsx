@@ -45,7 +45,7 @@ const timeline: TimelineEntry[] = [
   {
     company: "Freelance",
     role: { ru: "Fullstack-разработчик", en: "Fullstack Developer" },
-    start: "2026-12",
+    start: "2026-03",
     end: "now",
     color: "border-amber-500",
     dotColor: "bg-amber-500",

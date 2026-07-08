@@ -22,12 +22,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Mount the page content the moment the loader's progress bar fills
-  // (0.5s delay + 1.8s fill). It renders underneath the still-opaque loader,
-  // so the heavy mount is hidden and the loader can fade out smoothly.
+  // Reveal the page only once BOTH are true: the loader's progress bar has
+  // visibly filled (0.5s delay + 1.8s ≈ 2.3s) AND the hero image is fully
+  // fetched + decoded. Content then mounts under the still-opaque loader with
+  // the image already painted, so nothing jitters in when the loader fades.
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 2300);
-    return () => clearTimeout(timer);
+    let cancelled = false;
+
+    const minTime = new Promise<void>((resolve) => setTimeout(resolve, 2300));
+
+    const heroReady = new Promise<void>((resolve) => {
+      const img = new window.Image();
+      img.src = "/igor.webp";
+      const done = () => resolve();
+      if (typeof img.decode === "function") {
+        img.decode().then(done).catch(done);
+      } else {
+        img.onload = done;
+        img.onerror = done;
+      }
+      // Hard cap: a broken/slow asset must never trap the user on the loader.
+      setTimeout(done, 6000);
+    });
+
+    Promise.all([minTime, heroReady]).then(() => {
+      if (!cancelled) setLoaded(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
