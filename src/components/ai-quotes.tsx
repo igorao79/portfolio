@@ -54,6 +54,23 @@ const quotes: QuoteData[] = [
   },
 ];
 
+function QuoteBody({ q, locale }: { q: QuoteData; locale: Locale }) {
+  return (
+    <>
+      <p className="text-sm italic leading-relaxed text-foreground/80 sm:text-base">
+        &ldquo;{q.text[locale]}&rdquo;
+      </p>
+      <div className="mt-3 flex items-center gap-2">
+        <div className="h-px flex-1 bg-border" />
+        <div className="text-right">
+          <p className="text-sm font-semibold">{q.author}</p>
+          <p className="text-xs text-muted-foreground">{q.role[locale]}</p>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export function AIQuotes({ locale }: { locale: Locale }) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -117,32 +134,33 @@ export function AIQuotes({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      {/* Quote content */}
-      <div className="relative min-h-[120px] sm:min-h-[100px]">
-        <AnimatePresence custom={direction} mode="wait">
-          <motion.div
-            key={current}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            <p className="text-sm italic leading-relaxed text-foreground/80 sm:text-base">
-              &ldquo;{q.text[locale]}&rdquo;
-            </p>
-            <div className="mt-3 flex items-center gap-2">
-              <div className="h-px flex-1 bg-border" />
-              <div className="text-right">
-                <p className="text-sm font-semibold">{q.author}</p>
-                <p className="text-xs text-muted-foreground">
-                  {q.role[locale]}
-                </p>
-              </div>
+      {/* Quote content — an invisible sizer holding every quote fixes the
+          height to the longest one, so the card never resizes between quotes.
+          The animated active quote is overlaid on top. */}
+      <div className="relative">
+        <div className="grid" aria-hidden="true">
+          {quotes.map((qq, i) => (
+            <div key={i} style={{ gridArea: "1 / 1" }} className="invisible">
+              <QuoteBody q={qq} locale={locale} />
             </div>
-          </motion.div>
-        </AnimatePresence>
+          ))}
+        </div>
+
+        <div className="absolute inset-0">
+          <AnimatePresence custom={direction} mode="wait">
+            <motion.div
+              key={current}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <QuoteBody q={q} locale={locale} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Dots indicator */}

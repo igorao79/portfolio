@@ -1,19 +1,36 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useApp } from "@/context/app-context";
 import Image from "next/image";
+import { useState, useCallback, useEffect } from "react";
+
+const BAR_DELAY = 0.5; // s
+const BAR_DURATION = 1.8; // s
+const HOLD_AFTER_FILL = 250; // ms — small beat once the bar is full
+const FADE_FALLBACK = (BAR_DELAY + BAR_DURATION) * 1000 + 700; // safety net
 
 export function Loader() {
-  const { loaded } = useApp();
+  const [gone, setGone] = useState(false);
+
+  // Trigger the fade-out once the progress bar has finished filling
+  const finish = useCallback(() => {
+    setTimeout(() => setGone(true), HOLD_AFTER_FILL);
+  }, []);
+
+  // Safety net in case the bar's completion callback never fires
+  useEffect(() => {
+    const t = setTimeout(() => setGone(true), FADE_FALLBACK);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <AnimatePresence>
-      {!loaded && (
+      {!gone && (
         <motion.div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background"
+          initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           {/* Logo */}
           <motion.div
@@ -55,7 +72,12 @@ export function Loader() {
               className="h-full rounded-full bg-foreground"
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
-              transition={{ duration: 1.8, ease: [0.4, 0, 0.2, 1], delay: 0.5 }}
+              transition={{
+                duration: BAR_DURATION,
+                ease: [0.4, 0, 0.2, 1],
+                delay: BAR_DELAY,
+              }}
+              onAnimationComplete={finish}
             />
           </motion.div>
 

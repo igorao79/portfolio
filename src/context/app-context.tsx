@@ -22,9 +22,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Loading timer — show loader for 2.5s
+  // Mount the page content the moment the loader's progress bar fills
+  // (0.5s delay + 1.8s fill). It renders underneath the still-opaque loader,
+  // so the heavy mount is hidden and the loader can fade out smoothly.
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 2500);
+    const timer = setTimeout(() => setLoaded(true), 2300);
     return () => clearTimeout(timer);
   }, []);
 

@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Sparkles, MessageCircle } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 import { PromptCompare } from "@/components/prompt-compare";
+import { SkillsMcp } from "@/components/skills-mcp";
+import { CodingTools } from "@/components/coding-tools";
 import { ShinyText } from "@/components/ui/shiny-text";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 import { PhoneChatModal } from "@/components/phone-chat";
@@ -18,7 +20,7 @@ interface TimelineEntry {
   end: string;
   color: string;
   dotColor: string;
-  url: string;
+  url?: string;
 }
 
 const timeline: TimelineEntry[] = [
@@ -39,6 +41,14 @@ const timeline: TimelineEntry[] = [
     color: "border-emerald-500",
     dotColor: "bg-emerald-500",
     url: "https://agency-mst.com/",
+  },
+  {
+    company: "Freelance",
+    role: { ru: "Fullstack-разработчик", en: "Fullstack Developer" },
+    start: "2026-12",
+    end: "now",
+    color: "border-amber-500",
+    dotColor: "bg-amber-500",
   },
 ];
 
@@ -90,6 +100,9 @@ export function AboutSection() {
             {tr.about.bioStory}
           </p>
 
+          {/* Skills & MCP */}
+          <SkillsMcp locale={locale} />
+
           {/* Manifesto */}
           <div className="mt-5 border-t border-border pt-5">
             <p className="text-center text-base font-bold leading-snug sm:text-lg">
@@ -125,6 +138,17 @@ export function AboutSection() {
 
         <PhoneChatModal open={chatOpen} onClose={() => setChatOpen(false)} locale={locale} />
 
+        {/* Coding tools */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.12 }}
+          className="mt-8 sm:mt-10"
+        >
+          <CodingTools locale={locale} />
+        </motion.div>
+
         {/* AI Quotes */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -149,32 +173,54 @@ export function AboutSection() {
           </h3>
 
           <div className="mt-4 flex flex-col gap-3 sm:mt-5">
-            {timeline.map((entry, i) => (
-              <motion.a
-                key={entry.company}
-                href={entry.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * i }}
-                onMouseEnter={playHover}
-                className="group cursor-pointer rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-md sm:p-5"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-base font-bold transition-colors group-hover:text-primary sm:text-lg">
-                    {entry.company}
-                  </h4>
-                  <span className="text-[11px] tabular-nums text-muted-foreground sm:text-xs">
-                    {formatDate(entry.start, locale)} — {formatDate(entry.end, locale)}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {entry.role[locale]}
-                </p>
-              </motion.a>
-            ))}
+            {timeline.map((entry, i) => {
+              const cardClass =
+                "group rounded-lg border border-border bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-md sm:p-5";
+              const anim = {
+                initial: { opacity: 0, y: 15 },
+                whileInView: { opacity: 1, y: 0 },
+                viewport: { once: true },
+                transition: { delay: 0.1 * i },
+              } as const;
+              const inner = (
+                <>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h4 className="text-base font-bold transition-colors group-hover:text-primary sm:text-lg">
+                      {entry.company}
+                    </h4>
+                    <span className="text-[11px] tabular-nums text-muted-foreground sm:text-xs">
+                      {formatDate(entry.start, locale)} — {formatDate(entry.end, locale)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {entry.role[locale]}
+                  </p>
+                </>
+              );
+
+              return entry.url ? (
+                <motion.a
+                  key={entry.company}
+                  href={entry.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={playHover}
+                  className={`${cardClass} cursor-pointer`}
+                  {...anim}
+                >
+                  {inner}
+                </motion.a>
+              ) : (
+                <motion.div
+                  key={entry.company}
+                  onMouseEnter={playHover}
+                  className={cardClass}
+                  {...anim}
+                >
+                  {inner}
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

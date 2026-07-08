@@ -92,119 +92,81 @@ const CHAR_DELAY = 35;
 const PAUSE_BETWEEN = 800;
 const DISPLAY_TIME = 3000;
 
-/* ── Claw'd pixel crab (Claude Code style, 8-bit, theme-aware) ── */
+/* ── Claw'd — Claude Code's orange pixel crab mascot (8-bit) ── */
+const CLAWD_ORANGE = "#D97757";
+const CLAWD_EYE = "#1a1a1a";
+
 function Clawd() {
-  // Exact pixel grid matching the Claude Code welcome screen crab
-  // Each rect = 1 pixel unit in a 15x11 grid, scaled up
   const S = 3; // scale factor
+  // Orange body pixels on a 16×12 grid (matching the Claude Code mascot)
   // prettier-ignore
-  const pixels: [number, number, number, number, string][] = [
-    // Claws (raised up)
-    // Left claw
-    [1,2,1,1,"fill"], [2,1,1,1,"fill"], [2,2,1,1,"fill"], [3,2,1,1,"fill"],
+  const body: [number, number, number, number][] = [
+    // Left claw (pincer with a notch on top)
+    [1,1,1,1], [3,1,1,1],
+    [1,2,3,1],
+    [1,3,3,1],
     // Right claw
-    [11,2,1,1,"fill"], [12,1,1,1,"fill"], [12,2,1,1,"fill"], [13,2,1,1,"fill"],
-    // Body top row
-    [4,3,7,1,"fill"],
-    // Body middle (with eyes)
-    [3,4,9,1,"fill"],
-    // Eyes row
-    [3,5,2,1,"fill"], [6,5,3,1,"fill"], [10,5,2,1,"fill"],
-    // Eye pixels (inverted - these are the dark squares)
-    [5,5,1,1,"eye"], [9,5,1,1,"eye"],
-    // Body rows
-    [3,6,9,1,"fill"],
-    [4,7,7,1,"fill"],
-    // Mouth opening
-    [5,7,2,1,"mouth"], [8,7,2,1,"mouth"],
+    [12,1,1,1], [14,1,1,1],
+    [12,2,3,1],
+    [12,3,3,1],
+    // Rounded body
+    [5,3,6,1],   // shoulders (connects the claws)
+    [4,4,8,1],
+    [4,5,8,1],   // eyes row
+    [4,6,8,1],
+    [4,7,8,1],
+    [5,8,6,1],   // taper
     // Legs
-    [4,8,1,2,"fill"], [6,8,1,2,"fill"], [8,8,1,2,"fill"], [10,8,1,2,"fill"],
+    [5,9,1,1], [5,10,1,1],
+    [7,9,1,1], [7,10,1,1],
+    [9,9,1,1], [9,10,1,1],
   ];
+  // Two black eyes, centered
+  const eyes: [number, number][] = [[6, 5], [9, 5]];
 
   return (
     <div className="flex items-center justify-center">
-      <svg
-        width={15 * S}
-        height={11 * S}
-        viewBox={`0 0 ${15 * S} ${11 * S}`}
-      >
-        {pixels.map(([x, y, w, h, type], i) => (
-          <rect
-            key={i}
-            x={x * S}
-            y={y * S}
-            width={w * S}
-            height={h * S}
-            className={
-              type === "eye"
-                ? "fill-emerald-400"
-                : type === "mouth"
-                  ? "fill-transparent"
-                  : "fill-foreground"
-            }
-          />
+      <svg width={16 * S} height={12 * S} viewBox={`0 0 ${16 * S} ${12 * S}`}>
+        {body.map(([x, y, w, h], i) => (
+          <rect key={i} x={x * S} y={y * S} width={w * S} height={h * S} fill={CLAWD_ORANGE} />
+        ))}
+        {eyes.map(([x, y], i) => (
+          <rect key={`e${i}`} x={x * S} y={y * S} width={S} height={S} fill={CLAWD_EYE} />
         ))}
       </svg>
     </div>
   );
 }
 
-/* ── Dead Claw'd — flipped, no legs, X eyes ── */
+/* ── Dead Claw'd — grey, drooping claws, red X eyes ── */
+const CLAWD_DEAD = "#7d7d7d";
+
 function DeadClawd() {
   const S = 3;
   // prettier-ignore
-  const pixels: [number, number, number, number, string][] = [
-    // Body (same shape, but no claws raised, no legs — upside down)
-    // Body top row
-    [4,1,7,1,"fill"],
-    // Body rows
-    [3,2,9,1,"fill"],
-    // Eyes row — body parts around X eyes
-    [3,3,2,1,"fill"], [6,3,3,1,"fill"], [10,3,2,1,"fill"],
-    // X eye placeholders (will draw X lines over these)
-    [5,3,1,1,"xeye"], [9,3,1,1,"xeye"],
-    // Body middle
-    [3,4,9,1,"fill"],
-    [4,5,7,1,"fill"],
-    // Mouth
-    [5,5,2,1,"mouth"], [8,5,2,1,"mouth"],
-    // Claws drooping down
-    // Left claw
-    [1,4,1,1,"fill"], [2,4,1,1,"fill"], [2,5,1,1,"fill"], [3,5,1,1,"fill"],
-    // Right claw
-    [11,4,1,1,"fill"], [12,4,1,1,"fill"], [12,5,1,1,"fill"], [13,5,1,1,"fill"],
+  const body: [number, number, number, number][] = [
+    // Rounded body
+    [5,2,6,1],
+    [4,3,8,1],
+    [4,4,8,1],   // X-eyes row
+    [4,5,8,1],
+    [5,6,6,1],
+    // Drooping claws (hanging down at the sides)
+    [1,5,3,1], [1,6,1,1], [3,6,1,1],
+    [12,5,3,1], [12,6,1,1], [14,6,1,1],
   ];
 
   return (
-    <div className="flex items-center justify-center" style={{ transform: "scaleY(-1)" }}>
-      <svg
-        width={15 * S}
-        height={7 * S}
-        viewBox={`0 0 ${15 * S} ${7 * S}`}
-      >
-        {pixels.map(([x, y, w, h, type], i) => (
-          <rect
-            key={i}
-            x={x * S}
-            y={y * S}
-            width={w * S}
-            height={h * S}
-            className={
-              type === "xeye"
-                ? "fill-red-500"
-                : type === "mouth"
-                  ? "fill-transparent"
-                  : "fill-foreground"
-            }
-          />
+    <div className="flex items-center justify-center">
+      <svg width={16 * S} height={9 * S} viewBox={`0 0 ${16 * S} ${9 * S}`}>
+        {body.map(([x, y, w, h], i) => (
+          <rect key={i} x={x * S} y={y * S} width={w * S} height={h * S} fill={CLAWD_DEAD} />
         ))}
-        {/* X marks for eyes — drawn as lines */}
-        {/* Left X */}
-        <line x1={5*S} y1={3*S} x2={6*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
-        <line x1={6*S} y1={3*S} x2={5*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
-        {/* Right X */}
-        <line x1={9*S} y1={3*S} x2={10*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
-        <line x1={10*S} y1={3*S} x2={9*S} y2={4*S} className="stroke-red-500" strokeWidth="1.5" />
+        {/* Red X eyes */}
+        <line x1={6 * S} y1={4 * S} x2={7 * S} y2={5 * S} className="stroke-red-500" strokeWidth="1.5" />
+        <line x1={7 * S} y1={4 * S} x2={6 * S} y2={5 * S} className="stroke-red-500" strokeWidth="1.5" />
+        <line x1={9 * S} y1={4 * S} x2={10 * S} y2={5 * S} className="stroke-red-500" strokeWidth="1.5" />
+        <line x1={10 * S} y1={4 * S} x2={9 * S} y2={5 * S} className="stroke-red-500" strokeWidth="1.5" />
       </svg>
     </div>
   );
