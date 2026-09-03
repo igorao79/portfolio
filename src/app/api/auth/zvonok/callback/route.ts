@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  absolutePicture,
   CLIENT_ID,
   CLIENT_SECRET,
   ISSUER,
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest) {
           sub: String(claims.sub),
           name: claims.name ?? null,
           username: claims.preferred_username ?? null,
-          picture: claims.picture ?? null,
+          picture: absolutePicture(claims.picture),
         },
         tokens.access_token,
         ttlMs

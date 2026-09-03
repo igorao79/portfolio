@@ -167,6 +167,19 @@ export function configProblem(redirectUri: string): string | null {
   return null;
 }
 
+/**
+ * Звоночек отдаёт `picture` путём вида `/media/<key>?md5=…&expires=…`, а не
+ * абсолютным URL: подпись считается от пути, и хост в неё не входит. Такой
+ * src браузер разрешил бы относительно НАШЕГО домена и получил 404, поэтому
+ * достраиваем origin провайдера — `/media/` отдаёт тот же хост, что и issuer.
+ */
+export function absolutePicture(raw: unknown): string | null {
+  if (typeof raw !== "string" || raw.length === 0) return null;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (!raw.startsWith("/")) return null;
+  return `${ISSUER}${raw}`;
+}
+
 /** Куда возвращать пользователя после логина: только свои же пути. */
 export function safeReturnTo(raw: string | null): string {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return "/";
