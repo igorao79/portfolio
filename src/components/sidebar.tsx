@@ -3,6 +3,8 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { useHoverSound } from "@/hooks/use-hover-sound";
+import { useZvonokAuth } from "@/hooks/use-zvonok-auth";
+import { ZvonokButton } from "@/components/zvonok-button";
 import {
   Home,
   User,
@@ -30,6 +32,7 @@ export function Sidebar() {
     useApp();
   const tr = t(locale);
   const playHover = useHoverSound();
+  const zvonok = useZvonokAuth();
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -47,6 +50,16 @@ export function Sidebar() {
     <>
       {/* Desktop sidebar — right side */}
       <aside className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 flex-col items-center gap-2.5 md:flex lg:right-6 lg:gap-3">
+        {/* Вход через Звоночек — без Tooltip-обёртки, чтобы не вкладывать
+            кнопку в кнопку (та же причина, что у переключателя темы ниже) */}
+        <ZvonokButton
+          auth={zvonok}
+          locale={locale}
+          placement="left"
+          onMouseEnter={playHover}
+          className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-border bg-card shadow-sm transition-all hover:scale-110 hover:shadow-md lg:h-11 lg:w-11"
+        />
+
         {/* Music toggle */}
         <Tooltip>
           <TooltipTrigger
@@ -142,12 +155,24 @@ export function Sidebar() {
           <MusicIcon playing={musicPlaying} className="h-5 w-5" />
         </button>
 
-        <button
-          onClick={() => setLocale(locale === "ru" ? "en" : "ru")}
-          className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors"
-        >
-          <span className="text-sm font-bold">{locale === "ru" ? "EN" : "RU"}</span>
-        </button>
+        {/* Звоночек висит кружком НАД языком: в баре свободного места нет,
+            а всплывать ему всё равно вверх. */}
+        <div className="relative flex flex-col items-center">
+          <div className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2">
+            <ZvonokButton
+              auth={zvonok}
+              locale={locale}
+              placement="top"
+              className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-border bg-card shadow-lg transition-transform active:scale-95"
+            />
+          </div>
+          <button
+            onClick={() => setLocale(locale === "ru" ? "en" : "ru")}
+            className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors"
+          >
+            <span className="text-sm font-bold">{locale === "ru" ? "EN" : "RU"}</span>
+          </button>
+        </div>
 
         <AnimatedThemeToggler onMouseEnter={playHover} className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors" />
       </nav>

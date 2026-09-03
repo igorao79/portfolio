@@ -10,7 +10,6 @@ import { ContactsSection } from "@/components/sections/contacts-section";
 import { FooterSection } from "@/components/sections/footer-section";
 import { ParticlesBg } from "@/components/particles-bg";
 import { Loader } from "@/components/loader";
-import { ZvonokLogin } from "@/components/zvonok-login";
 import { useApp } from "@/context/app-context";
 
 export default function Page() {
@@ -25,7 +24,6 @@ export default function Page() {
           <SmoothScroll />
           <SectionObserver />
           <Sidebar />
-          <ZvonokLogin />
           <main className="pb-16 md:pb-0">
             <HomeSection />
             <AboutSection />

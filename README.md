@@ -63,7 +63,9 @@ OpenID Connect провайдер (Authorization Code + PKCE S256, discovery, JW
 | `src/app/api/auth/zvonok/callback` | сверка state/iss, обмен кода, профиль с `/userinfo` |
 | `src/app/api/auth/zvonok/me` | текущий профиль для клиента |
 | `src/app/api/auth/zvonok/logout` | отзыв токена у провайдера + сброс cookie |
-| `src/components/zvonok-login.tsx` | сама кнопка и карточка профиля |
+| `src/hooks/use-zvonok-auth.ts` | состояние входа (один запрос профиля на страницу) |
+| `src/components/zvonok-button.tsx` | кнопка и карточка профиля |
+| `src/components/sidebar.tsx` | место кнопки: над музыкой, на мобилке — кружком над языком |
 
 Профиль берётся с `/userinfo`, а не разбирается из `id_token`: это прямой
 backchannel-запрос к провайдеру по TLS с только что полученным access-токеном,
