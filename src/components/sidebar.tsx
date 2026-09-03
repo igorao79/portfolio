@@ -155,10 +155,17 @@ export function Sidebar() {
           <MusicIcon playing={musicPlaying} className="h-5 w-5" />
         </button>
 
-        {/* Звоночек висит кружком НАД языком: в баре свободного места нет,
-            а всплывать ему всё равно вверх. */}
+        <button
+          onClick={() => setLocale(locale === "ru" ? "en" : "ru")}
+          className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors"
+        >
+          <span className="text-sm font-bold">{locale === "ru" ? "EN" : "RU"}</span>
+        </button>
+
+        {/* Звоночек висит кружком НАД темой: в самом баре места нет, а с краю
+            всплывающая карточка не упирается в противоположный край экрана. */}
         <div className="relative flex flex-col items-center">
-          <div className="absolute bottom-full left-1/2 mb-3 -translate-x-1/2">
+          <div className="absolute bottom-full left-1/2 mb-10 -translate-x-1/2">
             <ZvonokButton
               auth={zvonok}
               locale={locale}
@@ -166,15 +173,8 @@ export function Sidebar() {
               className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-border bg-card shadow-lg transition-transform active:scale-95"
             />
           </div>
-          <button
-            onClick={() => setLocale(locale === "ru" ? "en" : "ru")}
-            className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors"
-          >
-            <span className="text-sm font-bold">{locale === "ru" ? "EN" : "RU"}</span>
-          </button>
+          <AnimatedThemeToggler onMouseEnter={playHover} className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors" />
         </div>
-
-        <AnimatedThemeToggler onMouseEnter={playHover} className="flex flex-col items-center gap-0.5 rounded-lg p-1.5 text-muted-foreground transition-colors" />
       </nav>
     </>
   );
