@@ -47,6 +47,13 @@ export const translations = {
       dark: "Тёмная тема",
       system: "Системная",
     },
+    zvonok: {
+      login: "Войти через Звоночек",
+      loginShort: "Звоночек",
+      logout: "Выйти",
+      signedInAs: "Вы вошли как",
+      failed: "Не удалось войти",
+    },
   },
   en: {
     nav: {
@@ -93,6 +100,13 @@ export const translations = {
       light: "Light theme",
       dark: "Dark theme",
       system: "System",
+    },
+    zvonok: {
+      login: "Sign in with Zvonochek",
+      loginShort: "Zvonochek",
+      logout: "Sign out",
+      signedInAs: "Signed in as",
+      failed: "Sign-in failed",
     },
   },
 } as const;
