@@ -67,8 +67,10 @@ export function HomeSection() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground sm:text-base">
             {tr.home.role}
           </p>
-          {/* Имя, а следом — ник на GitHub ссылкой: «Игорь / ⃝ igorao79» */}
-          <h1 className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:gap-x-4 sm:text-5xl md:justify-start md:text-6xl lg:text-7xl">
+          {/* Имя, а следом — ник на GitHub ссылкой: «Игорь / ⃝ igorao79».
+              Обычный инлайн-поток, а не flex: так слеш и ник садятся на одну
+              базовую линию с именем, а не по центру его высоты. */}
+          <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:text-5xl md:text-6xl lg:text-7xl">
             <SparklesText
               sparkleColor="currentColor"
               count={6}
@@ -79,16 +81,16 @@ export function HomeSection() {
             >
               {tr.home.name}
             </SparklesText>
-            <span aria-hidden="true" className="text-3xl font-light text-muted-foreground/40 sm:text-4xl md:text-5xl">
+            <span aria-hidden="true" className="mx-2 align-baseline text-3xl font-light sm:mx-3 sm:text-4xl md:text-5xl">
               /
             </span>
             <a
               href="https://github.com/igorao79"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-1.5 font-sans text-base font-semibold tracking-normal text-muted-foreground transition-colors hover:text-foreground sm:gap-2 sm:text-lg md:text-xl"
+              className="align-baseline font-sans text-base font-semibold tracking-normal text-foreground transition-opacity hover:opacity-60 sm:text-lg md:text-xl"
             >
-              <Github className="h-5 w-5 transition-transform group-hover:scale-110 sm:h-6 sm:w-6" />
+              <Github className="mr-1.5 inline-block h-5 w-5 align-text-bottom sm:h-6 sm:w-6" />
               igorao79
             </a>
           </h1>
