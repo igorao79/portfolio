@@ -5,7 +5,7 @@ import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { RotatingText } from "@/components/ui/rotating-text";
-import { ShinyText } from "@/components/ui/shiny-text";
+import { Github } from "lucide-react";
 import { SparklesText, Marquee } from "@igorao79/uivix";
 
 export function HomeSection() {
@@ -67,7 +67,8 @@ export function HomeSection() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground sm:text-base">
             {tr.home.role}
           </p>
-          <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:text-5xl md:text-6xl lg:text-7xl">
+          {/* Имя, а следом — ник на GitHub ссылкой: «Игорь / ⃝ igorao79» */}
+          <h1 className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:gap-x-4 sm:text-5xl md:justify-start md:text-6xl lg:text-7xl">
             <SparklesText
               sparkleColor="currentColor"
               count={6}
@@ -78,6 +79,18 @@ export function HomeSection() {
             >
               {tr.home.name}
             </SparklesText>
+            <span aria-hidden="true" className="text-3xl font-light text-muted-foreground/40 sm:text-4xl md:text-5xl">
+              /
+            </span>
+            <a
+              href="https://github.com/igorao79"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-1.5 font-sans text-base font-semibold tracking-normal text-muted-foreground transition-colors hover:text-foreground sm:gap-2 sm:text-lg md:text-xl"
+            >
+              <Github className="h-5 w-5 transition-transform group-hover:scale-110 sm:h-6 sm:w-6" />
+              igorao79
+            </a>
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
             {tr.home.descriptionPrefix}{" "}

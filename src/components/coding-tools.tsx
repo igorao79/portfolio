@@ -52,7 +52,10 @@ const tools: Tool[] = [
   {
     name: "Codex",
     Icon: OpenAIIcon,
-    models: [{ name: "GPT-5.5", role: ANALYSIS }],
+    models: [
+      { name: "Astra", role: CODING },
+      { name: "Sol", role: ANALYSIS },
+    ],
   },
 ];
 
