@@ -79,12 +79,13 @@ const projects: Project[] = [
     title: "ZVONOCHEK",
     subtitle: { ru: "ПРИЛОЖЕНИЕ ДЛЯ ЗВОНКОВ", en: "CALLING APP" },
     description: {
-      ru: "Мой мессенджер со звонками и чатами на Supabase. Он же отдаёт OAuth, через который можно войти в это портфолио — кнопка с лисёнком в боковой панели.",
-      en: "My own messenger with calls and chats on Supabase. It also serves the OAuth you can sign into this portfolio with — the fox button in the side panel.",
+      ru: "Мой мессенджер, и далеко не демка: чаты, звонки, группы, сообщества и ещё уйма всего. Есть веб-версия и приложение для macOS, в App Store он уже лежит, в Google Play скоро будет. Он же отдаёт OAuth, через который можно войти в это портфолио — кнопка с лисёнком в боковой панели.",
+      en: "My own messenger, and nothing like a demo: chats, calls, groups, communities and a pile more. There's a web version and a macOS app, it's already on the App Store, and Google Play is coming. It also serves the OAuth you can sign into this portfolio with — the fox button in the side panel.",
     },
     hue: 45,
-    tags: ["Cursor", "Next.js", "Supabase"],
-    live: "https://zvonochek.vercel.app/",
+    tags: ["Cursor", "Next.js"],
+    shots: ["/shots/zvonochek-1.webp", "/shots/zvonochek-2.webp"],
+    live: "https://zvo.is/download",
     repo: "igorao79/zvonochek",
   },
   // Временно скрыто:

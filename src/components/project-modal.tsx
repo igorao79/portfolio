@@ -1,8 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ExternalLink, Github, GitCommitHorizontal, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Github,
+  GitCommitHorizontal,
+  X,
+} from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import type { CSSProperties } from "react";
 
@@ -13,11 +21,78 @@ export interface Project {
   /** Оттенок плитки и акцентов карточки, 0–360 в oklch. */
   hue: number;
   tags: string[];
+  /** Скриншоты для галереи внутри карточки. */
+  shots?: string[];
   commercial?: boolean;
   /** Живая демка, если проект где-то развёрнут. */
   live?: string;
   /** owner/name на GitHub. */
   repo?: string;
+}
+
+/**
+ * Галерея скриншотов: все кадры лежат друг на друге в боксе фиксированной
+ * пропорции и переключаются прозрачностью. Пропорции у снимков разные,
+ * поэтому object-contain — кадр целиком, без обрезки.
+ */
+function Shots({ shots, title, locale }: { shots: string[]; title: string; locale: Locale }) {
+  const [i, setI] = useState(0);
+  const go = (d: number) => setI((p) => (p + d + shots.length) % shots.length);
+
+  return (
+    <div className="mt-5">
+      <div className="relative overflow-hidden rounded-xl border border-border bg-muted">
+        <div className="relative aspect-[16/10]">
+          {shots.map((src, n) => (
+            <Image
+              key={src}
+              src={src}
+              alt={title}
+              fill
+              sizes="(max-width: 640px) 100vw, 512px"
+              className={`object-contain transition-opacity duration-300 ${
+                n === i ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          ))}
+        </div>
+
+        {shots.length > 1 && (
+          <>
+            <button
+              onClick={() => go(-1)}
+              aria-label={locale === "ru" ? "Предыдущий снимок" : "Previous shot"}
+              className="absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-card"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => go(1)}
+              aria-label={locale === "ru" ? "Следующий снимок" : "Next shot"}
+              className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow-sm backdrop-blur-sm transition-colors hover:bg-card"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {shots.length > 1 && (
+        <div className="mt-3 flex justify-center gap-1.5">
+          {shots.map((src, n) => (
+            <button
+              key={src}
+              onClick={() => setI(n)}
+              aria-label={`${n + 1}`}
+              className={`h-1.5 cursor-pointer rounded-full transition-all ${
+                n === i ? "w-4 bg-foreground" : "w-1.5 bg-muted-foreground/30"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 interface Props {
@@ -62,7 +137,9 @@ export function ProjectModal({ project, commits, locale, onClose }: Props) {
             transition={{ type: "spring", damping: 24, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
             style={{ "--accent-h": project.hue } as CSSProperties}
-            className="project-tile relative w-full max-w-lg overflow-hidden rounded-2xl border shadow-2xl"
+            // max-h + скролл: с галереей карточка стала высокой и на коротких
+            // экранах упиралась бы в края.
+            className="project-tile relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border shadow-2xl"
           >
             <button
               onClick={onClose}
@@ -103,6 +180,12 @@ export function ProjectModal({ project, commits, locale, onClose }: Props) {
                   </p>
                 ))}
               </div>
+
+              {project.shots && project.shots.length > 0 && (
+                // key — чтобы при открытии другого проекта галерея начиналась
+                // с первого кадра, а не с того, где её оставили.
+                <Shots key={project.title} shots={project.shots} title={project.title} locale={locale} />
+              )}
 
               {/* Stack */}
               <div className="mt-5">
