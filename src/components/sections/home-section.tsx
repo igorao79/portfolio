@@ -81,18 +81,25 @@ export function HomeSection() {
             >
               {tr.home.name}
             </SparklesText>
-            <span aria-hidden="true" className="mx-2 align-baseline text-3xl font-light sm:mx-3 sm:text-4xl md:text-5xl">
-              /
+            {/* Слеш и ник — одной неразрывной группой: в полный размер имени
+                строка влезает не всегда, и переноситься они должны вместе, а
+                не оставлять слеш или иконку висеть в конце предыдущей. */}
+            <span className="whitespace-nowrap">
+              <span aria-hidden="true" className="mx-[0.15em] align-baseline font-light">
+                /
+              </span>
+              {/* Без своего text-* — размер наследуется от h1, то есть ровно
+                  как у имени. Иконка в em, чтобы расти вместе с ним. */}
+              <a
+                href="https://github.com/igorao79"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="align-baseline font-sans font-semibold tracking-normal text-foreground transition-opacity hover:opacity-60"
+              >
+                <Github className="mr-[0.2em] inline-block h-[0.72em] w-[0.72em] align-baseline" />
+                igorao79
+              </a>
             </span>
-            <a
-              href="https://github.com/igorao79"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="align-baseline font-sans text-base font-semibold tracking-normal text-foreground transition-opacity hover:opacity-60 sm:text-lg md:text-xl"
-            >
-              <Github className="mr-1.5 inline-block h-5 w-5 align-text-bottom sm:h-6 sm:w-6" />
-              igorao79
-            </a>
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
             {tr.home.descriptionPrefix}{" "}
