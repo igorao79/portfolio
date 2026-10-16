@@ -344,35 +344,30 @@ body {
 html {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent) transparent;
+  /* Место под полосу прокрутки держим всегда. Иначе страница дёргается
+     вбок дважды: когда лоадер уходит и контент впервые становится выше
+     экрана, и когда модалка вешает на body overflow: hidden.
+     Именно overflow-y, а не scrollbar-gutter: у html здесь overflow-y
+     остаётся visible (clip по X его не меняет), то есть html — не
+     скролл-контейнер, и gutter к нему не применяется. А вот overflow
+     корневого элемента всплывает на вьюпорт — полоса там будет всегда.
+     Накладным полосам (macOS по умолчанию) это ничего не стоит. */
+  overflow-y: scroll;
 }
 
 /* ── Project tiles ──
-   Каждая карточка проекта красится своим оттенком: hue приходит из данных
-   через --accent-h, а сам цвет собирается в oklch, чтобы светлая и тёмная
-   темы получали одинаково мягкий тон и плитки не сливались с фоном. */
+   Фон у всех плиток один — карточный. Своё у каждой только акцент: hue
+   приходит из данных через --accent-h и красит рамку, теги и стрелку,
+   чтобы плитки не сливались с фоном, но и не пестрили заливками. */
 .project-tile {
   --tint: oklch(0.62 0.15 var(--accent-h));
   border-color: color-mix(in oklab, var(--tint) 34%, var(--border));
-  background:
-    linear-gradient(
-      115deg,
-      color-mix(in oklab, var(--tint) 11%, var(--card)) 0%,
-      color-mix(in oklab, var(--tint) 3%, var(--card)) 55%,
-      var(--card) 100%
-    );
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease,
-    transform 0.3s ease;
+  background: var(--card);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .project-tile:hover {
   border-color: color-mix(in oklab, var(--tint) 62%, var(--border));
-  background:
-    linear-gradient(
-      115deg,
-      color-mix(in oklab, var(--tint) 20%, var(--card)) 0%,
-      color-mix(in oklab, var(--tint) 7%, var(--card)) 55%,
-      var(--card) 100%
-    );
   box-shadow: 0 10px 34px -14px color-mix(in oklab, var(--tint) 70%, transparent);
   transform: translateY(-2px);
 }

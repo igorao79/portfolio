@@ -27,6 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
+      <head>
+        {/* Лисёнок монтируется только после ответа /me, и запрос за картинкой
+            стартует лишь тогда — кружок успевает постоять белым. Preload
+            тянет её заранее, пока на экране ещё лоадер. */}
+        <link rel="preload" as="image" href="/zvonok.webp" type="image/webp" />
+      </head>
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased`}
       >

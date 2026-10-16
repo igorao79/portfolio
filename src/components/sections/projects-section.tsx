@@ -37,18 +37,19 @@ const projects: Project[] = [
     commercial: true,
     repo: "igorao79/rptbot",
   },
-  {
-    title: "XIVEX",
-    subtitle: { ru: "ИИ ПОИСКОВИК", en: "AI SEARCH ENGINE" },
-    description: {
-      ru: "Поисковик, который отвечает текстом, а не списком ссылок: запрос уходит в модель, ответ собирается на Next.js со стримингом.",
-      en: "A search engine that answers in prose instead of a list of links: the query goes to a model and the answer streams back through Next.js.",
-    },
-    hue: 200,
-    tags: ["Claude Code", "Next.js"],
-    live: "https://xivex.vercel.app/",
-    repo: "igorao79/xivex",
-  },
+  // Временно скрыто:
+  // {
+  //   title: "XIVEX",
+  //   subtitle: { ru: "ИИ ПОИСКОВИК", en: "AI SEARCH ENGINE" },
+  //   description: {
+  //     ru: "Поисковик, который отвечает текстом, а не списком ссылок: запрос уходит в модель, ответ собирается на Next.js со стримингом.",
+  //     en: "A search engine that answers in prose instead of a list of links: the query goes to a model and the answer streams back through Next.js.",
+  //   },
+  //   hue: 200,
+  //   tags: ["Claude Code", "Next.js"],
+  //   live: "https://xivex.vercel.app/",
+  //   repo: "igorao79/xivex",
+  // },
   {
     title: "SOULCYCLE",
     subtitle: { ru: "САЙТ КНИГИ", en: "BOOK WEBSITE" },
@@ -61,18 +62,19 @@ const projects: Project[] = [
     live: "https://igorao79.github.io/soulcycle/",
     repo: "igorao79/soulcycle",
   },
-  {
-    title: "CONVERTARYAO",
-    subtitle: { ru: "КОНВЕРТЕР ФАЙЛОВ", en: "FILE CONVERTER" },
-    description: {
-      ru: "Конвертер файлов, который работает прямо в браузере: перетащил файл — получил результат, без очередей и загрузки на чужой сервер.",
-      en: "A file converter that runs right in the browser: drop a file, get the result — no queues, no uploading to someone else's server.",
-    },
-    hue: 155,
-    tags: ["Claude Code", "Next.js"],
-    live: "https://convertaryao.vercel.app/",
-    repo: "igorao79/convertaryao",
-  },
+  // Временно скрыто:
+  // {
+  //   title: "CONVERTARYAO",
+  //   subtitle: { ru: "КОНВЕРТЕР ФАЙЛОВ", en: "FILE CONVERTER" },
+  //   description: {
+  //     ru: "Конвертер файлов, который работает прямо в браузере: перетащил файл — получил результат, без очередей и загрузки на чужой сервер.",
+  //     en: "A file converter that runs right in the browser: drop a file, get the result — no queues, no uploading to someone else's server.",
+  //   },
+  //   hue: 155,
+  //   tags: ["Claude Code", "Next.js"],
+  //   live: "https://convertaryao.vercel.app/",
+  //   repo: "igorao79/convertaryao",
+  // },
   {
     title: "ZVONOCHEK",
     subtitle: { ru: "ПРИЛОЖЕНИЕ ДЛЯ ЗВОНКОВ", en: "CALLING APP" },
@@ -85,18 +87,19 @@ const projects: Project[] = [
     live: "https://zvonochek.vercel.app/",
     repo: "igorao79/zvonochek",
   },
-  {
-    title: "2025–2026",
-    subtitle: { ru: "ИТОГИ ГОДА", en: "YEAR RECAP" },
-    description: {
-      ru: "Личный отчёт за год: что сделано, чему научился и куда ушло время — одной прокручиваемой страницей.",
-      en: "A personal year in review: what got shipped, what I learned and where the time went — all on one scrolling page.",
-    },
-    hue: 230,
-    tags: ["Cursor", "Next.js"],
-    live: "https://igor2025-2026.vercel.app/",
-    repo: "igorao79/igor2025-2026",
-  },
+  // Временно скрыто:
+  // {
+  //   title: "2025–2026",
+  //   subtitle: { ru: "ИТОГИ ГОДА", en: "YEAR RECAP" },
+  //   description: {
+  //     ru: "Личный отчёт за год: что сделано, чему научился и куда ушло время — одной прокручиваемой страницей.",
+  //     en: "A personal year in review: what got shipped, what I learned and where the time went — all on one scrolling page.",
+  //   },
+  //   hue: 230,
+  //   tags: ["Cursor", "Next.js"],
+  //   live: "https://igor2025-2026.vercel.app/",
+  //   repo: "igorao79/igor2025-2026",
+  // },
 ];
 
 export function ProjectsSection() {
