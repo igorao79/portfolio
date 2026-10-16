@@ -28,7 +28,7 @@ const projects: Project[] = [
     commits: 2239,
   },
   {
-    title: "SERPIUM",
+    title: "GOSLING",
     subtitle: { ru: "SEO ЛЕНДИНГИ С ИИ", en: "AI SEO LANDING PAGES" },
     description: {
       ru: "Коммерческий сервис, который собирает SEO-лендинги с помощью ИИ: генерация текстов и структуры страницы под запрос, вёрстка на Next.js и деплой на Railway.",
@@ -36,7 +36,7 @@ const projects: Project[] = [
     },
     hue: 275,
     tags: ["Claude Code", "Next.js", "Railway"],
-    shots: ["/shots/serpium-1.webp"],
+    shots: ["/shots/gosling-1.webp"],
     commercial: true,
     live: "https://serpium.online",
     // Репозиторий igorao79/Serpium закрытый — см. ZVONOCHEK ниже.
