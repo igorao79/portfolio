@@ -21,8 +21,9 @@ const projects: Project[] = [
     },
     hue: 135,
     tags: ["React", "Vite", "Express", "PostgreSQL", "Redis", "ethers.js"],
-    shots: ["/shots/cryptomia-1.webp"],
+    shots: ["/shots/cryptomia-1.webp", "/shots/cryptomia-2.webp"],
     commercial: true,
+    live: "https://pustbudt.xyz",
     // Репозиторий BogdanGlushkov/cryptoservice закрытый — см. ZVONOCHEK ниже.
     commits: 2239,
   },
@@ -35,9 +36,11 @@ const projects: Project[] = [
     },
     hue: 275,
     tags: ["Claude Code", "Next.js", "Railway"],
+    shots: ["/shots/serpium-1.webp"],
     commercial: true,
-    live: "https://serpium.up.railway.app/",
-    repo: "igorao79/serpium",
+    live: "https://serpium.online",
+    // Репозиторий igorao79/Serpium закрытый — см. ZVONOCHEK ниже.
+    commits: 1706,
   },
   {
     title: "RPTBOT",
