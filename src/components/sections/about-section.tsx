@@ -4,15 +4,12 @@ import { useApp } from "@/context/app-context";
 import { t, translations } from "@/lib/i18n";
 import { LocaleText } from "@/components/ui/locale-text";
 import { motion } from "framer-motion";
-import { Sparkles, MessageCircle } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
-import { PromptCompare } from "@/components/prompt-compare";
 import { SkillsMcp } from "@/components/skills-mcp";
 import { CodingTools } from "@/components/coding-tools";
 import { ShinyText } from "@/components/ui/shiny-text";
 import { useHoverSound } from "@/hooks/use-hover-sound";
-import { PhoneChatModal } from "@/components/phone-chat";
-import { useState } from "react";
 
 interface TimelineEntry {
   company: string;
@@ -66,7 +63,6 @@ export function AboutSection() {
   const { locale } = useApp();
   const tr = t(locale);
   const playHover = useHoverSound();
-  const [chatOpen, setChatOpen] = useState(false);
 
   return (
     <section
@@ -107,41 +103,7 @@ export function AboutSection() {
 
           {/* Skills & MCP */}
           <SkillsMcp locale={locale} />
-
-          {/* Manifesto */}
-          <div className="mt-5 border-t border-border pt-5">
-            <p className="text-center text-base font-bold leading-snug sm:text-lg">
-              {locale === "ru" ? (
-                <>
-                  Не бездумный промптинг —<br />
-                  <span className="text-muted-foreground">а осознанная разработка с ИИ.</span>
-                </>
-              ) : (
-                <>
-                  Not mindless prompting —<br />
-                  <span className="text-muted-foreground">but intentional development with AI.</span>
-                </>
-              )}
-            </p>
-          </div>
-
-          {/* Animated prompt comparison */}
-          <PromptCompare locale={locale} />
-
-          {/* Try it yourself button */}
-          <div className="mt-5 flex justify-center border-t border-border pt-5">
-            <button
-              onClick={() => setChatOpen(true)}
-              onMouseEnter={playHover}
-              className="group inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium shadow-sm transition-all hover:scale-105 hover:border-primary/30 hover:shadow-md"
-            >
-              <MessageCircle className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-primary" />
-              {locale === "ru" ? "Попробуй сам" : "Try it yourself"}
-            </button>
-          </div>
         </motion.div>
-
-        <PhoneChatModal open={chatOpen} onClose={() => setChatOpen(false)} locale={locale} />
 
         {/* Coding tools */}
         <motion.div
