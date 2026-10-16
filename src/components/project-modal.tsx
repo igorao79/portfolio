@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
+import { lockPageScroll } from "@/lib/lock-scroll";
 import type { CSSProperties } from "react";
 
 export interface Project {
@@ -112,12 +113,11 @@ interface Props {
 export function ProjectModal({ project, commits, locale, onClose }: Props) {
   useEffect(() => {
     if (!project) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockPageScroll();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      unlock();
       document.removeEventListener("keydown", onKey);
     };
   }, [project, onClose]);
@@ -141,6 +141,9 @@ export function ProjectModal({ project, commits, locale, onClose }: Props) {
             style={{ "--accent-h": project.hue } as CSSProperties}
             // max-h + скролл: с галереей карточка стала высокой и на коротких
             // экранах упиралась бы в края.
+            // data-lenis-prevent — иначе Lenis перехватит колесо и вместо
+            // содержимого модалки поедет страница под ней.
+            data-lenis-prevent
             className="project-tile relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border shadow-2xl"
           >
             <button
@@ -214,8 +217,13 @@ export function ProjectModal({ project, commits, locale, onClose }: Props) {
                 </p>
               )}
 
-              {/* Links */}
-              <div className="mt-6 flex flex-wrap gap-2">
+              {/* Links — у закрытого проекта ссылок может не быть вовсе,
+                  тогда и пустой отступ под них не нужен. */}
+              <div
+                className={`flex flex-wrap gap-2 ${
+                  project.live || project.repo ? "mt-6" : ""
+                }`}
+              >
                 {project.live && (
                   <a
                     href={project.live}

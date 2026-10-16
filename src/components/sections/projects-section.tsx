@@ -13,6 +13,20 @@ import type { Project } from "@/components/project-modal";
 
 const projects: Project[] = [
   {
+    title: "CRYPTOMIA",
+    subtitle: { ru: "КРИПТО-ШЛЮЗ", en: "CRYPTO PAYMENT GATEWAY" },
+    description: {
+      ru: "Платёжный шлюз для криптовалюты, который живёт на своей инфраструктуре — без стороннего кастодиана. Принимает USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE и SOL в восьми сетях: под каждый счёт заводится временный кошелёк, по событиям оплаты уходят подписанные вебхуки, кошельки по расписанию сметаются на нужный адрес. Сверху — админка с аналитикой, правами по проектам и 2FA. Цифры на скриншоте скрыты: проект коммерческий, это чужие обороты.",
+      en: "A crypto payment gateway that runs on its own infrastructure — no third-party custody. It takes USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE and SOL across eight networks: every invoice gets a temporary wallet, payment events fire signed webhooks, and wallets are swept to a target address on a schedule. On top sits an admin panel with analytics, per-project permissions and 2FA. The figures in the screenshot are blurred — it's a commercial project and those are someone else's turnover.",
+    },
+    hue: 135,
+    tags: ["React", "Vite", "Express", "PostgreSQL", "Redis", "ethers.js"],
+    shots: ["/shots/cryptomia-1.webp"],
+    commercial: true,
+    // Репозиторий BogdanGlushkov/cryptoservice закрытый — см. ZVONOCHEK ниже.
+    commits: 2239,
+  },
+  {
     title: "SERPIUM",
     subtitle: { ru: "SEO ЛЕНДИНГИ С ИИ", en: "AI SEO LANDING PAGES" },
     description: {
@@ -177,7 +191,7 @@ export function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="relative flex min-h-screen items-center justify-center px-4 py-20 sm:px-6 sm:py-24"
+      className="relative flex items-center justify-center px-4 py-16 sm:min-h-screen sm:px-6 sm:py-24"
     >
       <div className="relative z-10 w-full max-w-5xl">
         <motion.h2

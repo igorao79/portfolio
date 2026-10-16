@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink, KeyRound, X } from "lucide-react";
 import { t } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
+import { lockPageScroll } from "@/lib/lock-scroll";
 
 interface Props {
   open: boolean;
@@ -27,12 +28,11 @@ export function ZvonokInfoModal({ open, locale, onClose }: Props) {
 
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockPageScroll();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      unlock();
       document.removeEventListener("keydown", onKey);
     };
   }, [open, onClose]);

@@ -67,7 +67,7 @@ export function AboutSection() {
   return (
     <section
       id="about"
-      className="relative flex min-h-screen items-center justify-center px-4 py-20 sm:px-6 sm:py-24"
+      className="relative flex items-center justify-center px-4 py-16 sm:min-h-screen sm:px-6 sm:py-24"
     >
       <div className="relative z-10 w-full max-w-3xl">
         {/* Header */}
