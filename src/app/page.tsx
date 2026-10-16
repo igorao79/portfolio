@@ -18,21 +18,25 @@ export default function Page() {
   return (
     <>
       <Loader />
-      {loaded && (
-        <>
-          <ParticlesBg />
-          <SmoothScroll />
-          <SectionObserver />
-          <Sidebar />
-          <main className="pb-16 md:pb-0">
-            <HomeSection />
-            <AboutSection />
-            <ProjectsSection />
-            <ContactsSection />
-            <FooterSection />
-          </main>
-        </>
-      )}
+      {/* Страница монтируется сразу, а не по `loaded`. Раньше она появлялась
+          ровно в тот момент, когда лоадер начинал таять, и въезд героя
+          (framer-motion: задержка 0.3s + 0.6s анимации) приходился аккурат на
+          эти 700ms затухания — отсюда и дёрганье. Теперь картинка грузится,
+          раскладка считается и анимации входа отыгрывают под ещё
+          непрозрачным лоадером, а тает он уже над готовым кадром. */}
+      <ParticlesBg />
+      {/* Lenis — единственное, что ждёт: пока лоадер держит прокрутку
+          замороженной, плавному скроллу делать нечего. */}
+      {loaded && <SmoothScroll />}
+      <SectionObserver />
+      <Sidebar />
+      <main className="pb-16 md:pb-0">
+        <HomeSection />
+        <AboutSection />
+        <ProjectsSection />
+        <ContactsSection />
+        <FooterSection />
+      </main>
     </>
   );
 }

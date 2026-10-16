@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useApp } from "@/context/app-context";
+import { lockPageScroll } from "@/lib/lock-scroll";
 
 const BAR_DELAY = 0.5; // s
 const BAR_DURATION = 1.8; // s
@@ -28,6 +29,14 @@ export function Loader() {
       clearTimeout(remove);
     };
   }, [loaded]);
+
+  // Страница теперь живёт под лоадером с самого начала, так что прокрутку
+  // на это время держим замороженной — иначе её можно было бы увести вниз
+  // ещё до того, как лоадер уйдёт.
+  useEffect(() => {
+    if (gone) return;
+    return lockPageScroll();
+  }, [gone]);
 
   if (gone) return null;
 
