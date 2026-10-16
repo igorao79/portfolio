@@ -8,6 +8,12 @@ import type { ZvonokProfile } from "@/hooks/use-zvonok-auth";
 import { t } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { ZvonokInfoModal } from "@/components/zvonok-info-modal";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Auth = ReturnType<typeof useZvonokAuth>;
 
@@ -29,6 +35,7 @@ export function ZvonokButton({ auth, locale, placement, className, onMouseEnter 
   const tr = t(locale).zvonok;
   const { user, ready, busy, error, setError, logout } = auth;
   const [open, setOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -115,25 +122,23 @@ export function ZvonokButton({ auth, locale, placement, className, onMouseEnter 
         )}
       </AnimatePresence>
 
-      {user ? (
-        <button
-          onClick={() => setOpen((v) => !v)}
+      <Tooltip>
+        <TooltipTrigger
+          onClick={() => (user ? setOpen((v) => !v) : setInfoOpen(true))}
           onMouseEnter={onMouseEnter}
-          aria-label={user.username ? `@${user.username}` : tr.loginShort}
+          aria-label={user ? (user.username ? `@${user.username}` : tr.loginShort) : tr.login}
           className={cn(className, open && "border-primary")}
         >
           <Face user={user} />
-        </button>
-      ) : (
-        <a
-          href="/api/auth/zvonok/login"
-          onMouseEnter={onMouseEnter}
-          aria-label={tr.login}
-          className={className}
-        >
-          <Face user={null} />
-        </a>
-      )}
+        </TooltipTrigger>
+        <TooltipContent side={placement === "left" ? "left" : "top"}>
+          {user ? (user.username ? `@${user.username}` : tr.loginShort) : tr.tooltip}
+        </TooltipContent>
+      </Tooltip>
+
+      {/* Не вошли — сначала объясняем, что это за кнопка, и только из
+          модалки отправляем на реальный OAuth. */}
+      <ZvonokInfoModal open={infoOpen} locale={locale} onClose={() => setInfoOpen(false)} />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Blocks, Plug, Terminal } from "lucide-react";
+import { Blocks, Bot, Plug, Terminal } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
+import { LocaleText } from "@/components/ui/locale-text";
 
-type Category = "skills" | "mcp";
+type Category = "skills" | "agents" | "mcp";
 
 interface Item {
   name: string;
@@ -53,6 +54,36 @@ const data: Record<Category, CategoryData> = {
       },
     ],
   },
+  agents: {
+    label: "Agents",
+    tag: { ru: "Субагенты", en: "Subagents" },
+    def: {
+      ru: "Отдельные агенты со своим контекстом, моделью и набором инструментов. Тяжёлый поиск и разбор уходят им, а основной диалог остаётся чистым — и независимые куски работы считаются параллельно.",
+      en: "Separate agents with their own context, model and tool set. Heavy searching and digging goes to them, so the main thread stays clean — and independent chunks of work run in parallel.",
+    },
+    items: [
+      {
+        name: "explore",
+        desc: { ru: "поиск по незнакомой кодовой базе", en: "search an unfamiliar codebase" },
+      },
+      {
+        name: "plan",
+        desc: { ru: "архитектура до первой строчки", en: "architecture before line one" },
+      },
+      {
+        name: "code-review",
+        desc: { ru: "разбор диффа перед коммитом", en: "diff review before commit" },
+      },
+      {
+        name: "debugger",
+        desc: { ru: "причина бага по логам", en: "root cause from the logs" },
+      },
+      {
+        name: "web-fetch",
+        desc: { ru: "чтение доков и страниц", en: "reads docs & pages" },
+      },
+    ],
+  },
   mcp: {
     label: "MCP",
     tag: { ru: "Model Context Protocol", en: "Model Context Protocol" },
@@ -85,17 +116,25 @@ const data: Record<Category, CategoryData> = {
   },
 };
 
-const CATEGORIES: Category[] = ["skills", "mcp"];
+const CATEGORIES: Category[] = ["skills", "agents", "mcp"];
+const ICONS: Record<Category, typeof Blocks> = {
+  skills: Blocks,
+  agents: Bot,
+  mcp: Plug,
+};
 const AUTO_SWITCH = 7000;
 
 export function SkillsMcp({ locale }: { locale: Locale }) {
   const [active, setActive] = useState<Category>("skills");
 
   const cycle = useCallback(() => {
-    setActive((prev) => (prev === "skills" ? "mcp" : "skills"));
+    setActive((prev) => {
+      const i = CATEGORIES.indexOf(prev);
+      return CATEGORIES[(i + 1) % CATEGORIES.length];
+    });
   }, []);
 
-  // Auto-switch between Skills and MCP
+  // Auto-switch between Skills, Agents and MCP
   useEffect(() => {
     const timer = setInterval(cycle, AUTO_SWITCH);
     return () => clearInterval(timer);
@@ -113,9 +152,9 @@ export function SkillsMcp({ locale }: { locale: Locale }) {
         </div>
 
         {/* Toggle pills */}
-        <div className="flex shrink-0 items-center gap-1 self-stretch rounded-full border border-border bg-background/60 p-0.5 sm:self-auto">
+        <div className="flex w-full shrink-0 items-center gap-1 self-stretch rounded-full border border-border bg-background/60 p-0.5 sm:w-auto sm:self-auto">
           {CATEGORIES.map((cat) => {
-            const Icon = cat === "skills" ? Blocks : Plug;
+            const Icon = ICONS[cat];
             const selected = active === cat;
             return (
               <button
@@ -159,7 +198,7 @@ export function SkillsMcp({ locale }: { locale: Locale }) {
 
               {/* Definition */}
               <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                {cd.def[locale]}
+                <LocaleText locale={locale} ru={cd.def.ru} en={cd.def.en} />
               </p>
 
               {/* Items */}
@@ -177,9 +216,9 @@ export function SkillsMcp({ locale }: { locale: Locale }) {
                     </span>
                   </div>
                 ))}
-                {cat === "skills" && (
+                {cat !== "mcp" && (
                   <span className="rounded-lg border border-dashed border-border px-2.5 py-1.5 font-mono text-[10px] text-muted-foreground sm:text-[11px]">
-                    + 50…
+                    {cat === "skills" ? "+ 50…" : "+ …"}
                   </span>
                 )}
               </div>
@@ -190,9 +229,11 @@ export function SkillsMcp({ locale }: { locale: Locale }) {
 
       {/* Footnote */}
       <p className="mt-4 border-t border-border pt-3 text-center text-[11px] leading-relaxed text-muted-foreground sm:text-xs">
-        {locale === "ru"
-          ? "И это лишь часть — я использую огромное количество скиллов под разные задачи, все сюда просто не уместить."
-          : "And that's just a slice — I use a huge number of skills for different purposes; they simply don't all fit here."}
+        <LocaleText
+          locale={locale}
+          ru="И это лишь часть — я использую огромное количество скиллов под разные задачи, все сюда просто не уместить."
+          en="And that's just a slice — I use a huge number of skills for different purposes; they simply don't all fit here."
+        />
       </p>
     </div>
   );

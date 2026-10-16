@@ -1,7 +1,8 @@
 "use client";
 
 import { useApp } from "@/context/app-context";
-import { t } from "@/lib/i18n";
+import { t, translations } from "@/lib/i18n";
+import { LocaleText } from "@/components/ui/locale-text";
 import { motion } from "framer-motion";
 import { Sparkles, MessageCircle } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
@@ -97,7 +98,11 @@ export function AboutSection() {
             {locale === "ru" ? "Мой путь" : "My Journey"}
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {tr.about.bioStory}
+            <LocaleText
+              locale={locale}
+              ru={translations.ru.about.bioStory}
+              en={translations.en.about.bioStory}
+            />
           </p>
 
           {/* Skills & MCP */}

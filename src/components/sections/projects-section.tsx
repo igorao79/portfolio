@@ -5,32 +5,34 @@ import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import { ArrowUpRight, GitCommitHorizontal, Github } from "lucide-react";
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 import { ShinyText } from "@/components/ui/shiny-text";
-import { Card } from "@igorao79/uivix";
-
-interface Project {
-  title: string;
-  subtitle: { ru: string; en: string };
-  url: string;
-  tags: string[];
-  commercial?: boolean;
-  repo?: string;
-}
+import { ProjectModal } from "@/components/project-modal";
+import type { Project } from "@/components/project-modal";
 
 const projects: Project[] = [
   {
     title: "SERPIUM",
     subtitle: { ru: "SEO ЛЕНДИНГИ С ИИ", en: "AI SEO LANDING PAGES" },
-    url: "https://serpium.up.railway.app/",
+    description: {
+      ru: "Коммерческий сервис, который собирает SEO-лендинги с помощью ИИ: генерация текстов и структуры страницы под запрос, вёрстка на Next.js и деплой на Railway.",
+      en: "A commercial service that builds SEO landing pages with AI: copy and page structure generated for the query, markup on Next.js, deployed to Railway.",
+    },
+    hue: 275,
     tags: ["Claude Code", "Next.js", "Railway"],
     commercial: true,
+    live: "https://serpium.up.railway.app/",
     repo: "igorao79/serpium",
   },
   {
     title: "RPTBOT",
     subtitle: { ru: "SEO ЛЕНДИНГИ С ИИ", en: "AI SEO LANDING PAGES" },
-    url: "https://github.com/igorao79/rptbot",
+    description: {
+      ru: "Telegram-бот для коммерческой генерации SEO-лендингов: заказ и выдача результата прямо в чате, бэкенд живёт на Render.",
+      en: "A Telegram bot for commercial SEO landing generation: the whole order-to-result flow lives in the chat, with the backend hosted on Render.",
+    },
+    hue: 25,
     tags: ["Cursor", "Render", "Telegram"],
     commercial: true,
     repo: "igorao79/rptbot",
@@ -38,36 +40,61 @@ const projects: Project[] = [
   {
     title: "XIVEX",
     subtitle: { ru: "ИИ ПОИСКОВИК", en: "AI SEARCH ENGINE" },
-    url: "https://xivex.vercel.app/",
+    description: {
+      ru: "Поисковик, который отвечает текстом, а не списком ссылок: запрос уходит в модель, ответ собирается на Next.js со стримингом.",
+      en: "A search engine that answers in prose instead of a list of links: the query goes to a model and the answer streams back through Next.js.",
+    },
+    hue: 200,
     tags: ["Claude Code", "Next.js"],
+    live: "https://xivex.vercel.app/",
     repo: "igorao79/xivex",
   },
   {
     title: "SOULCYCLE",
     subtitle: { ru: "САЙТ КНИГИ", en: "BOOK WEBSITE" },
-    url: "https://igorao79.github.io/soulcycle/",
+    description: {
+      ru: "Сайт книги с главами, персонажами и аккаунтами читателей. React на фронте, Supabase — под авторизацию и данные.",
+      en: "A book website with chapters, characters and reader accounts. React on the front, Supabase for auth and data.",
+    },
+    hue: 340,
     tags: ["Cursor", "React", "Supabase"],
+    live: "https://igorao79.github.io/soulcycle/",
     repo: "igorao79/soulcycle",
   },
   {
     title: "CONVERTARYAO",
     subtitle: { ru: "КОНВЕРТЕР ФАЙЛОВ", en: "FILE CONVERTER" },
-    url: "https://convertaryao.vercel.app/",
+    description: {
+      ru: "Конвертер файлов, который работает прямо в браузере: перетащил файл — получил результат, без очередей и загрузки на чужой сервер.",
+      en: "A file converter that runs right in the browser: drop a file, get the result — no queues, no uploading to someone else's server.",
+    },
+    hue: 155,
     tags: ["Claude Code", "Next.js"],
+    live: "https://convertaryao.vercel.app/",
     repo: "igorao79/convertaryao",
   },
   {
     title: "ZVONOCHEK",
     subtitle: { ru: "ПРИЛОЖЕНИЕ ДЛЯ ЗВОНКОВ", en: "CALLING APP" },
-    url: "https://zvonochek.vercel.app/",
+    description: {
+      ru: "Мой мессенджер со звонками и чатами на Supabase. Он же отдаёт OAuth, через который можно войти в это портфолио — кнопка с лисёнком в боковой панели.",
+      en: "My own messenger with calls and chats on Supabase. It also serves the OAuth you can sign into this portfolio with — the fox button in the side panel.",
+    },
+    hue: 45,
     tags: ["Cursor", "Next.js", "Supabase"],
+    live: "https://zvonochek.vercel.app/",
     repo: "igorao79/zvonochek",
   },
   {
     title: "2025–2026",
     subtitle: { ru: "ИТОГИ ГОДА", en: "YEAR RECAP" },
-    url: "https://igor2025-2026.vercel.app/",
+    description: {
+      ru: "Личный отчёт за год: что сделано, чему научился и куда ушло время — одной прокручиваемой страницей.",
+      en: "A personal year in review: what got shipped, what I learned and where the time went — all on one scrolling page.",
+    },
+    hue: 230,
     tags: ["Cursor", "Next.js"],
+    live: "https://igor2025-2026.vercel.app/",
     repo: "igorao79/igor2025-2026",
   },
 ];
@@ -77,6 +104,7 @@ export function ProjectsSection() {
   const tr = t(locale);
   const playHover = useHoverSound();
   const [commits, setCommits] = useState<Record<string, number>>({});
+  const [openProject, setOpenProject] = useState<Project | null>(null);
 
   useEffect(() => {
     const CACHE_KEY = "gh_commits";
@@ -146,20 +174,28 @@ export function ProjectsSection() {
           {projects.map((project, i) => {
             const commitCount = project.repo ? commits[project.repo] : null;
             return (
+              // Не <button>: внутри плитки живёт <h3>, а заголовок внутри
+              // кнопки — невалидная разметка. Роль и клавиатуру навешиваем
+              // руками.
               <motion.div
                 key={project.title}
+                role="button"
+                tabIndex={0}
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.08 * i }}
-              >
-              <Card variant="spotlight" className="overflow-hidden rounded-xl border-border p-0">
-              <a
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => setOpenProject(project)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setOpenProject(project);
+                  }
+                }}
                 onMouseEnter={playHover}
-                className="group flex items-center justify-between px-4 py-3.5 transition-all sm:px-8 sm:py-5"
+                style={{ "--accent-h": project.hue } as CSSProperties}
+                aria-label={project.title}
+                className="project-tile group flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-xl border px-4 py-3.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground sm:px-8 sm:py-5"
               >
                 {/* Left: title + tags */}
                 <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
@@ -178,7 +214,7 @@ export function ProjectsSection() {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-medium text-muted-foreground sm:text-[10px]"
+                        className="project-chip rounded-full border px-2 py-0.5 text-[9px] font-medium sm:text-[10px]"
                       >
                         {tag}
                       </span>
@@ -197,12 +233,10 @@ export function ProjectsSection() {
                   <span className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground md:block">
                     {project.subtitle[locale]}
                   </span>
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border transition-all group-hover:bg-foreground sm:h-10 sm:w-10">
-                    <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-all duration-300 group-hover:rotate-45 group-hover:text-background sm:h-5 sm:w-5" />
+                  <div className="project-arrow flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all sm:h-10 sm:w-10">
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45 sm:h-5 sm:w-5" />
                   </div>
                 </div>
-              </a>
-              </Card>
               </motion.div>
             );
           })}
@@ -236,6 +270,13 @@ export function ProjectsSection() {
           </div>
         </motion.a>
       </div>
+
+      <ProjectModal
+        project={openProject}
+        commits={openProject?.repo ? commits[openProject.repo] ?? null : null}
+        locale={locale}
+        onClose={() => setOpenProject(null)}
+      />
     </section>
   );
 }

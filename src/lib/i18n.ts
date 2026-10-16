@@ -53,6 +53,15 @@ export const translations = {
       logout: "Выйти",
       signedInAs: "Вы вошли как",
       failed: "Не удалось войти",
+      tooltip: "Звоночек — мой мессенджер",
+      modalTitle: "Вход через Звоночек",
+      modalLead:
+        "Это OAuth-авторизация через «Звоночек» — мессенджер, который я написал сам.",
+      modalBody:
+        "Он встроен прямо в это портфолио — для теста: нажимаете «Попробовать», входите в своём аккаунте Звоночка, и сюда возвращается ваш профиль — имя и аватар. Ничего, кроме них, портфолио не получает.",
+      modalTry: "Попробовать",
+      modalAbout: "Открыть Звоночек",
+      close: "Закрыть",
     },
   },
   en: {
@@ -107,6 +116,15 @@ export const translations = {
       logout: "Sign out",
       signedInAs: "Signed in as",
       failed: "Sign-in failed",
+      tooltip: "Zvonochek — my own messenger",
+      modalTitle: "Sign in with Zvonochek",
+      modalLead:
+        "This is OAuth sign-in through Zvonochek — a messenger I built myself.",
+      modalBody:
+        "It's wired straight into this portfolio as a test: hit “Try it”, sign in with your Zvonochek account, and your profile comes back here — name and avatar. The portfolio gets nothing beyond that.",
+      modalTry: "Try it",
+      modalAbout: "Open Zvonochek",
+      close: "Close",
     },
   },
 } as const;

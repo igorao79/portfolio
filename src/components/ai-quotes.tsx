@@ -134,16 +134,19 @@ export function AIQuotes({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      {/* Quote content — an invisible sizer holding every quote fixes the
-          height to the longest one, so the card never resizes between quotes.
+      {/* Quote content — an invisible sizer holding every quote IN BOTH
+          LOCALES fixes the height to the longest one, so the card resizes
+          neither between quotes nor when the language is switched.
           The animated active quote is overlaid on top. */}
       <div className="relative">
         <div className="grid" aria-hidden="true">
-          {quotes.map((qq, i) => (
-            <div key={i} style={{ gridArea: "1 / 1" }} className="invisible">
-              <QuoteBody q={qq} locale={locale} />
-            </div>
-          ))}
+          {(["ru", "en"] as const).map((l) =>
+            quotes.map((qq, i) => (
+              <div key={`${l}-${i}`} style={{ gridArea: "1 / 1" }} className="invisible">
+                <QuoteBody q={qq} locale={l} />
+              </div>
+            ))
+          )}
         </div>
 
         <div className="absolute inset-0">
