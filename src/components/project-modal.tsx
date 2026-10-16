@@ -26,8 +26,10 @@ export interface Project {
   commercial?: boolean;
   /** Живая демка, если проект где-то развёрнут. */
   live?: string;
-  /** owner/name на GitHub. */
+  /** owner/name на GitHub — только для публичных: отсюда берутся коммиты и ссылка. */
   repo?: string;
+  /** Счёт коммитов руками — для закрытых репозиториев, куда браузер не достучится. */
+  commits?: number;
 }
 
 /**

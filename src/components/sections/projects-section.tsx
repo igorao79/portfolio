@@ -83,10 +83,12 @@ const projects: Project[] = [
       en: "My own messenger, and nothing like a demo: chats, calls, groups, communities and a pile more. There's a web version and a macOS app, it's already on the App Store, and Google Play is coming. It also serves the OAuth you can sign into this portfolio with — the fox button in the side panel.",
     },
     hue: 45,
-    tags: ["Cursor", "Next.js"],
+    tags: ["React", "React Native", "Electron", "Express", "PostgreSQL", "LiveKit"],
     shots: ["/shots/zvonochek-1.webp", "/shots/zvonochek-2.webp"],
     live: "https://zvo.is/download",
-    repo: "igorao79/zvonochek",
+    // Репозиторий BogdanGlushkov/zvonok закрытый: ссылку на него давать
+    // некуда, а счёт коммитов браузер оттуда не получит — он здесь руками.
+    commits: 2067,
   },
   // Временно скрыто:
   // {
@@ -102,6 +104,19 @@ const projects: Project[] = [
   //   repo: "igorao79/igor2025-2026",
   // },
 ];
+
+/**
+ * Сколько коммитов показать. Обычно число приезжает из GitHub API по repo,
+ * но у закрытого репозитория браузер получит 404 — для таких проектов счёт
+ * лежит в данных руками (project.commits) и обновляется вместе с ними.
+ */
+function resolveCommits(
+  project: Project,
+  fetched: Record<string, number>
+): number | null {
+  if (project.commits != null) return project.commits;
+  return project.repo ? fetched[project.repo] ?? null : null;
+}
 
 export function ProjectsSection() {
   const { locale } = useApp();
@@ -176,7 +191,7 @@ export function ProjectsSection() {
 
         <div className="mt-6 flex flex-col gap-3 sm:mt-8">
           {projects.map((project, i) => {
-            const commitCount = project.repo ? commits[project.repo] : null;
+            const commitCount = resolveCommits(project, commits);
             return (
               // Не <button>: внутри плитки живёт <h3>, а заголовок внутри
               // кнопки — невалидная разметка. Роль и клавиатуру навешиваем
@@ -277,7 +292,7 @@ export function ProjectsSection() {
 
       <ProjectModal
         project={openProject}
-        commits={openProject?.repo ? commits[openProject.repo] ?? null : null}
+        commits={openProject ? resolveCommits(openProject, commits) : null}
         locale={locale}
         onClose={() => setOpenProject(null)}
       />
