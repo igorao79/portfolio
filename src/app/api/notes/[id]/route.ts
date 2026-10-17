@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE, readSession } from "@/lib/zvonok-auth";
 import { isNotesAdmin, notesStore } from "@/lib/notes-store";
-import { isNoteSection, isValidOffset } from "@/lib/notes-rules";
+import { noteTextProblem, normalizeNoteText, parsePosition } from "@/lib/notes-rules";
 import { storeError, toPublic } from "@/lib/notes-api";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -18,22 +18,26 @@ async function editable(req: NextRequest, id: string, allowAdmin: boolean) {
   return { user, note };
 }
 
-/** Перенос: менять можно только место, текст — нет. */
+/** Правка своей заметки: текст, место или и то и другое. */
 export async function PATCH(req: NextRequest, { params }: Ctx) {
   const { id } = await params;
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
-  if (!isNoteSection(body?.section) || !isValidOffset(body?.x, body?.y)) {
+
+  let text: string | undefined;
+  if (typeof body?.text === "string") {
+    text = normalizeNoteText(body.text);
+    const problem = noteTextProblem(text);
+    if (problem) return NextResponse.json({ error: problem }, { status: 400 });
+  }
+  const position = body && "section" in body ? parsePosition(body) : undefined;
+  if (position === null || (text === undefined && position === undefined)) {
     return NextResponse.json({ error: "position" }, { status: 400 });
   }
+
   try {
     const found = await editable(req, id, false);
     if ("error" in found) return found.error;
-    const note = {
-      ...found.note,
-      section: body.section,
-      x: Math.round(body.x as number),
-      y: Math.round(body.y as number),
-    };
+    const note = { ...found.note, ...position, ...(text === undefined ? {} : { text }) };
     await notesStore.put(note);
     return NextResponse.json({ note: toPublic(note, found.user.sub) });
   } catch (e) {

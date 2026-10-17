@@ -6,12 +6,10 @@
 
 export const NOTE_MAX_CHARS = 120;
 export const NOTE_MAX_LINES = 4;
-/** Сколько заметок может висеть у одного аккаунта одновременно. */
-export const NOTES_PER_USER = 3;
+/** Одна заметка на аккаунт: уже повесил — дальше только редактируешь. */
+export const NOTES_PER_USER = 1;
 /** Общий потолок, чтобы поля не превратились в забор. */
 export const NOTES_TOTAL = 200;
-/** Пауза между новыми заметками одного аккаунта. */
-export const NOTE_COOLDOWN_MS = 30_000;
 
 /** Секции, к которым можно привязать заметку (id у <section>). */
 export const NOTE_SECTIONS = ["home", "about", "projects", "contacts"] as const;
@@ -26,12 +24,23 @@ export interface Note {
   text: string;
   /** Секция-якорь: при другой ширине экрана секции едут, а заметка с ними. */
   section: NoteSection;
-  /** Левый край заметки относительно центра страницы, px. */
-  x: number;
-  /** Верх заметки относительно верха секции, px. */
-  y: number;
+  /**
+   * Левый край заметки относительно центра страницы, px. null — заметку
+   * повесили с телефона, и место на полях ПК ей подбирается само.
+   */
+  x: number | null;
+  /** Верх заметки относительно верха секции, px; null — вместе с x. */
+  y: number | null;
+  /**
+   * Где заметка по высоте секции, 0…1. Px между ПК и телефоном не
+   * переносятся (секция на мобилке в разы выше), а доля — да: по ней
+   * заметка находит свой зазор между блоками.
+   */
+  r: number;
   createdAt: number;
 }
+
+export type NotePosition = Pick<Note, "section" | "x" | "y" | "r">;
 
 /** То, что отдаётся наружу: sub чужих заметок посетителям ни к чему. */
 export type PublicNote = Omit<Note, "sub"> & { mine: boolean };
@@ -87,6 +96,20 @@ export function noteTextProblem(text: string): NoteTextProblem | null {
 
 export function isNoteSection(v: unknown): v is NoteSection {
   return typeof v === "string" && (NOTE_SECTIONS as readonly string[]).includes(v);
+}
+
+export function isValidRatio(r: unknown): r is number {
+  return typeof r === "number" && Number.isFinite(r) && r >= 0 && r <= 1;
+}
+
+/** Позиция из тела запроса: либо точка на полях, либо только доля (с мобилки). */
+export function parsePosition(body: Record<string, unknown> | null): NotePosition | null {
+  if (!body || !isNoteSection(body.section) || !isValidRatio(body.r)) return null;
+  if (body.x === null && body.y === null) {
+    return { section: body.section, x: null, y: null, r: body.r };
+  }
+  if (!isValidOffset(body.x, body.y)) return null;
+  return { section: body.section, x: Math.round(body.x), y: Math.round(body.y as number), r: body.r };
 }
 
 /** Координаты — с запасом под любой экран, но без мусора вроде 1e308. */
