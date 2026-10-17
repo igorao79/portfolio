@@ -10,10 +10,14 @@ import { ContactsSection } from "@/components/sections/contacts-section";
 import { FooterSection } from "@/components/sections/footer-section";
 import { ParticlesBg } from "@/components/particles-bg";
 import { Loader } from "@/components/loader";
+import { MarginNotes } from "@/components/margin-notes";
 import { useApp } from "@/context/app-context";
+import { useZvonokAuth } from "@/hooks/use-zvonok-auth";
 
 export default function Page() {
   const { loaded } = useApp();
+  // Один вход на страницу: им пользуются и сайдбар, и заметки на полях.
+  const zvonok = useZvonokAuth();
 
   return (
     <>
@@ -29,7 +33,8 @@ export default function Page() {
           замороженной, плавному скроллу делать нечего. */}
       {loaded && <SmoothScroll />}
       <SectionObserver />
-      <Sidebar />
+      <Sidebar auth={zvonok} />
+      <MarginNotes auth={zvonok} />
       <main className="pb-16 md:pb-0">
         <HomeSection />
         <AboutSection />

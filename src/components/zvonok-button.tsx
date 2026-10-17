@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut, X } from "lucide-react";
+import { LogOut, StickyNote, X } from "lucide-react";
 import type { useZvonokAuth } from "@/hooks/use-zvonok-auth";
 import type { ZvonokProfile } from "@/hooks/use-zvonok-auth";
 import { t } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { ZvonokInfoModal } from "@/components/zvonok-info-modal";
+import { PLACE_NOTE_EVENT } from "@/components/margin-notes";
 import {
   Tooltip,
   TooltipContent,
@@ -110,10 +111,22 @@ export function ZvonokButton({ auth, locale, placement, className, onMouseEnter 
               <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
             )}
             <button
+              onClick={() => {
+                setOpen(false);
+                window.dispatchEvent(new Event(PLACE_NOTE_EVENT));
+              }}
+              onMouseEnter={onMouseEnter}
+              className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              <StickyNote className="h-3.5 w-3.5" />
+              {tr.leaveNote}
+            </button>
+            <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">{tr.leaveNoteHint}</p>
+            <button
               onClick={logout}
               disabled={busy}
               onMouseEnter={onMouseEnter}
-              className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-muted disabled:opacity-50"
+              className="mt-2.5 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-muted disabled:opacity-50"
             >
               <LogOut className="h-3.5 w-3.5" />
               {tr.logout}

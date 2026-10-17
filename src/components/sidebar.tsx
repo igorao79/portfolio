@@ -3,7 +3,7 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { useHoverSound } from "@/hooks/use-hover-sound";
-import { useZvonokAuth } from "@/hooks/use-zvonok-auth";
+import type { useZvonokAuth } from "@/hooks/use-zvonok-auth";
 import { ZvonokButton } from "@/components/zvonok-button";
 import {
   Home,
@@ -27,12 +27,11 @@ const sections = [
   { id: "contacts", icon: Mail },
 ] as const;
 
-export function Sidebar() {
+export function Sidebar({ auth: zvonok }: { auth: ReturnType<typeof useZvonokAuth> }) {
   const { locale, setLocale, musicPlaying, toggleMusic, activeSection } =
     useApp();
   const tr = t(locale);
   const playHover = useHoverSound();
-  const zvonok = useZvonokAuth();
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
