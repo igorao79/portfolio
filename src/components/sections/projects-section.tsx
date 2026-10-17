@@ -16,12 +16,12 @@ const projects: Project[] = [
     title: "CRYPTOMIA",
     subtitle: { ru: "КРИПТО-ШЛЮЗ", en: "CRYPTO PAYMENT GATEWAY" },
     description: {
-      ru: "Платёжный шлюз для криптовалюты, который живёт на своей инфраструктуре — без стороннего кастодиана. Принимает USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE и SOL в восьми сетях: под каждый счёт заводится временный кошелёк, по событиям оплаты уходят подписанные вебхуки, кошельки по расписанию сметаются на нужный адрес. Сверху — админка с аналитикой, правами по проектам и 2FA. Цифры на скриншоте скрыты: проект коммерческий, это чужие обороты.",
-      en: "A crypto payment gateway that runs on its own infrastructure — no third-party custody. It takes USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE and SOL across eight networks: every invoice gets a temporary wallet, payment events fire signed webhooks, and wallets are swept to a target address on a schedule. On top sits an admin panel with analytics, per-project permissions and 2FA. The figures in the screenshot are blurred — it's a commercial project and those are someone else's turnover.",
+      ru: "Платёжный шлюз для криптовалюты, который живёт на своей инфраструктуре — без стороннего кастодиана. Принимает USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE и SOL в восьми сетях: под каждый счёт заводится временный кошелёк, по событиям оплаты уходят подписанные вебхуки, кошельки по расписанию сметаются на нужный адрес. Сверху — админка с аналитикой, правами по проектам и 2FA. Её показать не могу: проект коммерческий, обороты там чужие.",
+      en: "A crypto payment gateway that runs on its own infrastructure — no third-party custody. It takes USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE and SOL across eight networks: every invoice gets a temporary wallet, payment events fire signed webhooks, and wallets are swept to a target address on a schedule. On top sits an admin panel with analytics, per-project permissions and 2FA — which I can't show: the project is commercial and the turnover there isn't mine.",
     },
     hue: 135,
     tags: ["React", "Vite", "Express", "PostgreSQL", "Redis", "ethers.js"],
-    shots: ["/shots/cryptomia-1.webp", "/shots/cryptomia-2.webp"],
+    shots: ["/shots/cryptomia-landing.webp"],
     commercial: true,
     live: "https://pustbudt.xyz",
     // Репозиторий BogdanGlushkov/cryptoservice закрытый — см. ZVONOCHEK ниже.
