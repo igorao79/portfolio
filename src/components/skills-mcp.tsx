@@ -211,8 +211,11 @@ export function SkillsMcp({ locale }: { locale: Locale }) {
                     <code className="font-mono text-[11px] font-semibold text-foreground sm:text-xs">
                       {item.name}
                     </code>
+                    {/* Обе локали друг на друге: русские подписи длиннее, и
+                        на узком экране плашки перескакивали на лишний ряд —
+                        карточка меняла высоту вместе со всей страницей. */}
                     <span className="text-[10px] text-muted-foreground sm:text-[11px]">
-                      {item.desc[locale]}
+                      <LocaleText locale={locale} ru={item.desc.ru} en={item.desc.en} />
                     </span>
                   </div>
                 ))}

@@ -8,6 +8,7 @@ import { Sparkles } from "lucide-react";
 import { AIQuotes } from "@/components/ai-quotes";
 import { SkillsMcp } from "@/components/skills-mcp";
 import { CodingTools } from "@/components/coding-tools";
+import { AppleDeveloper } from "@/components/apple-developer";
 import { ShinyText } from "@/components/ui/shiny-text";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 
@@ -114,6 +115,17 @@ export function AboutSection() {
           className="mt-8 sm:mt-10"
         >
           <CodingTools locale={locale} />
+        </motion.div>
+
+        {/* Apple Developer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.13 }}
+          className="mt-8 sm:mt-10"
+        >
+          <AppleDeveloper locale={locale} />
         </motion.div>
 
         {/* AI Quotes */}
