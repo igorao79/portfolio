@@ -67,39 +67,49 @@ export function HomeSection() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground sm:text-base">
             {tr.home.role}
           </p>
-          {/* Имя, а следом — ник на GitHub ссылкой: «Игорь / ⃝ igorao79».
-              Обычный инлайн-поток, а не flex: так слеш и ник садятся на одну
-              базовую линию с именем, а не по центру его высоты. */}
+          {/* Имя — оно же ссылка на GitHub. Ник рядом с ним в полный
+              размер в колонку возле фото не помещается, поэтому на десктопе
+              он свёрнут и выезжает по наведению; позиционирован абсолютно,
+              так что на раскладку не влияет и перенести строку не может.
+              На мобилке ховера нет и места хватает — там он просто в потоке. */}
           <h1 className="mt-2 font-heading text-4xl font-bold tracking-tight sm:mt-3 sm:text-5xl md:text-6xl lg:text-7xl">
-            <SparklesText
-              sparkleColor="currentColor"
-              count={6}
-              minSize={8}
-              maxSize={18}
-              speed={500}
-              className="font-heading"
+            <a
+              href="https://github.com/igorao79"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub — igorao79"
+              className="group relative inline-block whitespace-nowrap align-baseline"
             >
-              {tr.home.name}
-            </SparklesText>
-            {/* Слеш и ник — одной неразрывной группой: в полный размер имени
-                строка влезает не всегда, и переноситься они должны вместе, а
-                не оставлять слеш или иконку висеть в конце предыдущей. */}
-            <span className="whitespace-nowrap">
-              <span aria-hidden="true" className="mx-[0.15em] align-baseline font-light">
-                /
-              </span>
-              {/* Без своего text-* — размер наследуется от h1, то есть ровно
-                  как у имени. Иконка в em, чтобы расти вместе с ним. */}
-              <a
-                href="https://github.com/igorao79"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="align-baseline font-sans font-semibold tracking-normal text-foreground transition-opacity hover:opacity-60"
+              <SparklesText
+                sparkleColor="currentColor"
+                count={6}
+                minSize={8}
+                maxSize={18}
+                speed={500}
+                className="font-heading"
               >
-                <Github className="mr-[0.2em] inline-block h-[0.72em] w-[0.72em] align-baseline" />
-                igorao79
-              </a>
-            </span>
+                {tr.home.name}
+              </SparklesText>
+              <span
+                className="
+                  whitespace-nowrap align-baseline
+                  md:absolute md:bottom-0 md:left-full md:-translate-x-3 md:opacity-0
+                  md:transition-[translate,opacity] md:duration-500 md:ease-out
+                  md:group-hover:translate-x-0 md:group-hover:opacity-100
+                  md:motion-reduce:transition-none
+                "
+              >
+                <span aria-hidden="true" className="mx-[0.15em] align-baseline font-light">
+                  /
+                </span>
+                {/* Без своего text-* — размер наследуется от h1, то есть ровно
+                    как у имени. Иконка в em, чтобы расти вместе с ним. */}
+                <span className="align-baseline font-sans font-semibold tracking-normal">
+                  <Github className="mr-[0.2em] inline-block h-[0.72em] w-[0.72em] align-baseline" />
+                  igorao79
+                </span>
+              </span>
+            </a>
           </h1>
           <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-6 sm:text-lg">
             {tr.home.descriptionPrefix}{" "}
