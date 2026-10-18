@@ -13,6 +13,9 @@ interface AppContextType {
   loaded: boolean;
 }
 
+/** Фон, а не трек: едва слышно, чтобы не перебивать. */
+const MUSIC_VOLUME = 0.04;
+
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -54,40 +57,45 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Хочет ли человек музыку прямо сейчас. Ref, а не только state: слушатель
+  // первого взаимодействия вешается один раз и иначе навсегда запомнил бы
+  // стартовое «да» — и включал музыку тем же кликом, которым её выключили.
+  const wantMusic = useRef(true);
+
   useEffect(() => {
-    audioRef.current = new Audio("/music/phone.mp3");
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.1;
+    const audio = new Audio("/music/phone.mp3");
+    audio.loop = true;
+    audio.volume = MUSIC_VOLUME;
+    audioRef.current = audio;
 
-    // Autoplay on first user interaction
-    const playOnInteraction = () => {
-      if (audioRef.current && musicPlaying) {
-        audioRef.current.play().catch(() => {});
-      }
-      document.removeEventListener("click", playOnInteraction);
-      document.removeEventListener("scroll", playOnInteraction);
+    // Браузер даёт запустить звук только после жеста: клика, касания или
+    // клавиши (прокрутка жестом не считается). Ждём первый такой и снимаем
+    // слушатели, только когда музыка действительно заиграла.
+    const events = ["pointerdown", "keydown", "touchstart"] as const;
+    const stop = () => events.forEach((e) => document.removeEventListener(e, onGesture));
+    const onGesture = () => {
+      // Жест — это и клик по самой кнопке музыки: её обработчик уже успел
+      // поменять wantMusic, так что решаем после него.
+      setTimeout(() => {
+        if (!wantMusic.current) return stop();
+        audio.play().then(stop, () => {});
+      }, 0);
     };
-
-    document.addEventListener("click", playOnInteraction);
-    document.addEventListener("scroll", playOnInteraction);
+    events.forEach((e) => document.addEventListener(e, onGesture));
 
     return () => {
-      document.removeEventListener("click", playOnInteraction);
-      document.removeEventListener("scroll", playOnInteraction);
-      audioRef.current?.pause();
+      stop();
+      audio.pause();
     };
   }, []);
 
   const toggleMusic = useCallback(() => {
-    if (audioRef.current) {
-      if (musicPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play().catch(() => {});
-      }
-    }
-    setMusicPlaying((prev) => !prev);
-  }, [musicPlaying]);
+    const next = !wantMusic.current;
+    wantMusic.current = next;
+    if (next) audioRef.current?.play().catch(() => {});
+    else audioRef.current?.pause();
+    setMusicPlaying(next);
+  }, []);
 
   return (
     <AppContext.Provider
