@@ -3,13 +3,31 @@
 import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
-import { ArrowUpRight, GitCommitHorizontal, Github } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpRight,
+  Globe,
+  GitCommitHorizontal,
+  Github,
+  Package,
+  Radar,
+  Receipt,
+  Rocket,
+  Search,
+  Sparkles,
+  Wallet,
+  Webhook,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { useHoverSound } from "@/hooks/use-hover-sound";
 import { ShinyText } from "@/components/ui/shiny-text";
 import { ProjectModal } from "@/components/project-modal";
 import type { Project } from "@/components/project-modal";
+import { ReactionSummary } from "@/components/project-reactions";
+import { useReactions } from "@/hooks/use-reactions";
+import type { useZvonokAuth } from "@/hooks/use-zvonok-auth";
+import type { ReactionProject } from "@/lib/reactions-rules";
 
 const projects: Project[] = [
   {
@@ -24,6 +42,48 @@ const projects: Project[] = [
     shots: ["/shots/cryptomia-landing.webp"],
     commercial: true,
     live: "https://pustbudt.xyz",
+    flow: [
+      {
+        icon: Receipt,
+        label: { ru: "Счёт", en: "Invoice" },
+        hint: {
+          ru: "мерчант создаёт счёт: сумма, монета и сеть — USDT, BTC, TON и ещё шесть монет в восьми сетях.",
+          en: "the merchant creates an invoice: amount, coin and network — USDT, BTC, TON and six more coins across eight networks.",
+        },
+      },
+      {
+        icon: Wallet,
+        label: { ru: "Кошелёк", en: "Wallet" },
+        hint: {
+          ru: "под счёт заводится свой временный кошелёк, так что платёж ни с чем не перепутать.",
+          en: "the invoice gets its own temporary wallet, so a payment can't be mixed up with another.",
+        },
+      },
+      {
+        icon: Radar,
+        label: { ru: "Оплата", en: "Payment" },
+        hint: {
+          ru: "сервис ловит перевод на адрес счёта — всё на своей инфраструктуре, без стороннего кастодиана.",
+          en: "the service catches the transfer to the invoice address — all on its own infrastructure, no third-party custody.",
+        },
+      },
+      {
+        icon: Webhook,
+        label: { ru: "Вебхук", en: "Webhook" },
+        hint: {
+          ru: "по событиям оплаты мерчанту уходят подписанные вебхуки — подделать статус не выйдет.",
+          en: "payment events fire signed webhooks to the merchant — the status can't be forged.",
+        },
+      },
+      {
+        icon: ArrowDownToLine,
+        label: { ru: "Свип", en: "Sweep" },
+        hint: {
+          ru: "по расписанию временные кошельки сметаются на нужный адрес, и деньги не висят по сотне адресов.",
+          en: "on a schedule the temporary wallets are swept to the target address, so funds don't sit scattered across addresses.",
+        },
+      },
+    ],
     // Репозиторий BogdanGlushkov/cryptoservice закрытый — см. ZVONOCHEK ниже.
     commits: 2239,
   },
@@ -39,6 +99,48 @@ const projects: Project[] = [
     shots: ["/shots/gosling-1.webp"],
     commercial: true,
     live: "https://serpium.online",
+    flow: [
+      {
+        icon: Search,
+        label: { ru: "Запрос", en: "Query" },
+        hint: {
+          ru: "в кабинете задаётся поисковый запрос, под который нужен лендинг.",
+          en: "the dashboard takes the search query the landing page is for.",
+        },
+      },
+      {
+        icon: Globe,
+        label: { ru: "SERP", en: "SERP" },
+        hint: {
+          ru: "Playwright снимает выдачу — что сейчас в топе по этому запросу.",
+          en: "Playwright reads the search results — what ranks for this query right now.",
+        },
+      },
+      {
+        icon: Sparkles,
+        label: { ru: "Claude", en: "Claude" },
+        hint: {
+          ru: "Claude пишет тексты и структуру страницы под запрос и выдачу.",
+          en: "Claude writes the copy and page structure for the query and the results.",
+        },
+      },
+      {
+        icon: Package,
+        label: { ru: "Сборка", en: "Build" },
+        hint: {
+          ru: "готовый сайт собирается и упаковывается.",
+          en: "the finished site gets built and packaged.",
+        },
+      },
+      {
+        icon: Rocket,
+        label: { ru: "Выкатка", en: "Ship" },
+        hint: {
+          ru: "сайт выкатывается, а прогресс всей генерации всё это время идёт в кабинет по вебсокету.",
+          en: "the site ships, and generation progress streams into the dashboard over a websocket the whole way.",
+        },
+      },
+    ],
     // Репозиторий igorao79/Serpium закрытый — см. ZVONOCHEK ниже.
     commits: 1706,
   },
@@ -135,12 +237,13 @@ function resolveCommits(
   return project.repo ? fetched[project.repo] ?? null : null;
 }
 
-export function ProjectsSection() {
+export function ProjectsSection({ auth }: { auth: ReturnType<typeof useZvonokAuth> }) {
   const { locale } = useApp();
   const tr = t(locale);
   const playHover = useHoverSound();
   const [commits, setCommits] = useState<Record<string, number>>({});
   const [openProject, setOpenProject] = useState<Project | null>(null);
+  const reactions = useReactions(auth);
 
   useEffect(() => {
     const CACHE_KEY = "gh_commits";
@@ -260,6 +363,7 @@ export function ProjectsSection() {
 
                 {/* Right: commits + subtitle + arrow */}
                 <div className="flex items-center gap-2 sm:gap-4">
+                  <ReactionSummary reactions={reactions.all[project.title as ReactionProject]} />
                   {commitCount != null && commitCount > 0 && (
                     <div className="hidden items-center gap-1 text-muted-foreground lg:flex">
                       <GitCommitHorizontal className="h-3.5 w-3.5" />
@@ -311,6 +415,7 @@ export function ProjectsSection() {
         project={openProject}
         commits={openProject ? resolveCommits(openProject, commits) : null}
         locale={locale}
+        reactions={reactions}
         onClose={() => setOpenProject(null)}
       />
     </section>

@@ -14,6 +14,11 @@ import {
 import type { Locale } from "@/lib/i18n";
 import { lockPageScroll } from "@/lib/lock-scroll";
 import type { CSSProperties } from "react";
+import { ReactionBar } from "@/components/project-reactions";
+import { ProjectFlow } from "@/components/project-flow";
+import type { FlowStep } from "@/components/project-flow";
+import type { useReactions } from "@/hooks/use-reactions";
+import type { ReactionProject } from "@/lib/reactions-rules";
 
 export interface Project {
   title: string;
@@ -31,6 +36,8 @@ export interface Project {
   repo?: string;
   /** Счёт коммитов руками — для закрытых репозиториев, куда браузер не достучится. */
   commits?: number;
+  /** Как проект устроен внутри — анимированная схема в карточке. */
+  flow?: FlowStep[];
 }
 
 /**
@@ -102,6 +109,7 @@ interface Props {
   project: Project | null;
   commits: number | null;
   locale: Locale;
+  reactions: ReturnType<typeof useReactions>;
   onClose: () => void;
 }
 
@@ -110,7 +118,7 @@ interface Props {
  * на GitHub, теперь сначала показываем, что это за проект, и уже оттуда
  * даём ссылки на демо и репозиторий.
  */
-export function ProjectModal({ project, commits, locale, onClose }: Props) {
+export function ProjectModal({ project, commits, locale, reactions, onClose }: Props) {
   useEffect(() => {
     if (!project) return;
     const unlock = lockPageScroll();
@@ -192,6 +200,8 @@ export function ProjectModal({ project, commits, locale, onClose }: Props) {
                 <Shots key={project.title} shots={project.shots} title={project.title} locale={locale} />
               )}
 
+              {project.flow && <ProjectFlow key={`${project.title}-flow`} steps={project.flow} locale={locale} />}
+
               {/* Stack */}
               <div className="mt-5">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -216,6 +226,14 @@ export function ProjectModal({ project, commits, locale, onClose }: Props) {
                   {locale === "ru" ? "коммитов" : "commits"}
                 </p>
               )}
+
+              <ReactionBar
+                reactions={reactions.all[project.title as ReactionProject]}
+                signedIn={reactions.signedIn}
+                error={reactions.error}
+                locale={locale}
+                onToggle={(r) => reactions.toggle(project.title as ReactionProject, r)}
+              />
 
               {/* Links — у закрытого проекта ссылок может не быть вовсе,
                   тогда и пустой отступ под них не нужен. */}

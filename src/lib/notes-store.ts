@@ -1,24 +1,13 @@
 /**
- * Где живут заметки на полях.
- *
- * На проде — Redis по REST (Upstash или Vercel KV, у них один протокол): у
- * серверлесс-функции нет своего диска, а держать ради пары сотен заметок
- * отдельную БД с пулом соединений незачем. Все заметки лежат в одном hash
- * `notes`: id → JSON.
- *
- * Без переменных окружения — JSON-файл в `.data/`, чтобы локально всё
- * работало из коробки. На Vercel файл записать не выйдет, и API честно
- * ответит, что хранилище не настроено.
+ * Где живут заметки на полях: в Redis — один hash `notes` (id → JSON),
+ * локально — `.data/notes.json`. Подробности про выбор хранилища — в kv.ts.
  */
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import type { Note } from "@/lib/notes-rules";
+import { REDIS_ENABLED, readJson, redis, writeJson } from "@/lib/kv";
 
-const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "";
-const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
+export { StoreUnavailable } from "@/lib/kv";
+
 const KEY = "notes";
-
-export class StoreUnavailable extends Error {}
 
 interface Store {
   all(): Promise<Note[]>;
@@ -27,20 +16,6 @@ interface Store {
 }
 
 // ─────────────────────────────── Redis ───────────────────────────────
-
-async function redis<T>(command: (string | number)[]): Promise<T> {
-  const res = await fetch(REDIS_URL, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${REDIS_TOKEN}`, "Content-Type": "application/json" },
-    body: JSON.stringify(command),
-    cache: "no-store",
-  });
-  const data = (await res.json().catch(() => null)) as { result?: T; error?: string } | null;
-  if (!res.ok || !data || data.error) {
-    throw new StoreUnavailable(data?.error ?? `redis: HTTP ${res.status}`);
-  }
-  return data.result as T;
-}
 
 const redisStore: Store = {
   async all() {
@@ -66,25 +41,8 @@ const redisStore: Store = {
 
 // ──────────────────────────────── файл ───────────────────────────────
 
-const FILE = path.join(process.cwd(), ".data", "notes.json");
-
-async function readFile(): Promise<Record<string, Note>> {
-  try {
-    return JSON.parse(await fs.readFile(FILE, "utf8")) as Record<string, Note>;
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code === "ENOENT") return {};
-    throw new StoreUnavailable(String(e));
-  }
-}
-
-async function writeFile(data: Record<string, Note>): Promise<void> {
-  try {
-    await fs.mkdir(path.dirname(FILE), { recursive: true });
-    await fs.writeFile(FILE, JSON.stringify(data, null, 2));
-  } catch (e) {
-    throw new StoreUnavailable(String(e));
-  }
-}
+const readFile = () => readJson<Record<string, Note>>(KEY, {});
+const writeFile = (data: Record<string, Note>) => writeJson(KEY, data);
 
 const fileStore: Store = {
   async all() {
@@ -102,7 +60,7 @@ const fileStore: Store = {
   },
 };
 
-export const notesStore: Store = REDIS_URL && REDIS_TOKEN ? redisStore : fileStore;
+export const notesStore: Store = REDIS_ENABLED ? redisStore : fileStore;
 
 /**
  * Кто может снимать любые заметки: usernames или sub через запятую в

@@ -38,7 +38,7 @@ export default function Page() {
       <main className="pb-16 md:pb-0">
         <HomeSection />
         <AboutSection />
-        <ProjectsSection />
+        <ProjectsSection auth={zvonok} />
         <ContactsSection />
         <FooterSection />
       </main>
