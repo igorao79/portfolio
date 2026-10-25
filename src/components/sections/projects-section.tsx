@@ -4,19 +4,14 @@ import { useApp } from "@/context/app-context";
 import { t } from "@/lib/i18n";
 import { motion } from "framer-motion";
 import {
-  ArrowDownToLine,
   ArrowUpRight,
   Globe,
   GitCommitHorizontal,
   Github,
   Package,
-  Radar,
-  Receipt,
   Rocket,
   Search,
   Sparkles,
-  Wallet,
-  Webhook,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
@@ -30,63 +25,65 @@ import type { useZvonokAuth } from "@/hooks/use-zvonok-auth";
 import type { ReactionProject } from "@/lib/reactions-rules";
 
 const projects: Project[] = [
-  {
-    title: "CRYPTOMIA",
-    subtitle: { ru: "КРИПТО-ШЛЮЗ", en: "CRYPTO PAYMENT GATEWAY" },
-    description: {
-      ru: "Платёжный шлюз для криптовалюты, который живёт на своей инфраструктуре — без стороннего кастодиана. Принимает USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE и SOL в восьми сетях: под каждый счёт заводится временный кошелёк, по событиям оплаты уходят подписанные вебхуки, кошельки по расписанию сметаются на нужный адрес. Сверху — админка с аналитикой, правами по проектам и 2FA. Её показать не могу: проект коммерческий, обороты там чужие.",
-      en: "A crypto payment gateway that runs on its own infrastructure — no third-party custody. It takes USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE and SOL across eight networks: every invoice gets a temporary wallet, payment events fire signed webhooks, and wallets are swept to a target address on a schedule. On top sits an admin panel with analytics, per-project permissions and 2FA — which I can't show: the project is commercial and the turnover there isn't mine.",
-    },
-    hue: 135,
-    tags: ["React", "Vite", "Express", "PostgreSQL", "Redis", "ethers.js"],
-    shots: ["/shots/cryptomia-landing.webp"],
-    commercial: true,
-    live: "https://pustbudt.xyz",
-    flow: [
-      {
-        icon: Receipt,
-        label: { ru: "Счёт", en: "Invoice" },
-        hint: {
-          ru: "мерчант создаёт счёт: сумма, монета и сеть — USDT, BTC, TON и ещё шесть монет в восьми сетях.",
-          en: "the merchant creates an invoice: amount, coin and network — USDT, BTC, TON and six more coins across eight networks.",
-        },
-      },
-      {
-        icon: Wallet,
-        label: { ru: "Кошелёк", en: "Wallet" },
-        hint: {
-          ru: "под счёт заводится свой временный кошелёк, так что платёж ни с чем не перепутать.",
-          en: "the invoice gets its own temporary wallet, so a payment can't be mixed up with another.",
-        },
-      },
-      {
-        icon: Radar,
-        label: { ru: "Оплата", en: "Payment" },
-        hint: {
-          ru: "сервис ловит перевод на адрес счёта — всё на своей инфраструктуре, без стороннего кастодиана.",
-          en: "the service catches the transfer to the invoice address — all on its own infrastructure, no third-party custody.",
-        },
-      },
-      {
-        icon: Webhook,
-        label: { ru: "Вебхук", en: "Webhook" },
-        hint: {
-          ru: "по событиям оплаты мерчанту уходят подписанные вебхуки — подделать статус не выйдет.",
-          en: "payment events fire signed webhooks to the merchant — the status can't be forged.",
-        },
-      },
-      {
-        icon: ArrowDownToLine,
-        label: { ru: "Свип", en: "Sweep" },
-        hint: {
-          ru: "по расписанию временные кошельки сметаются на нужный адрес, и деньги не висят по сотне адресов.",
-          en: "on a schedule the temporary wallets are swept to the target address, so funds don't sit scattered across addresses.",
-        },
-      },
-    ],
-    // Репозиторий BogdanGlushkov/cryptoservice закрытый — см. ZVONOCHEK ниже.
-    commits: 2239,
-  },
+  // Временно скрыто. Вернуть — и добавить в импорт из lucide-react иконки
+  // схемы: ArrowDownToLine, Radar, Receipt, Wallet, Webhook.
+  // {
+  //   title: "CRYPTOMIA",
+  //   subtitle: { ru: "КРИПТО-ШЛЮЗ", en: "CRYPTO PAYMENT GATEWAY" },
+  //   description: {
+  //     ru: "Платёжный шлюз для криптовалюты, который живёт на своей инфраструктуре — без стороннего кастодиана. Принимает USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE и SOL в восьми сетях: под каждый счёт заводится временный кошелёк, по событиям оплаты уходят подписанные вебхуки, кошельки по расписанию сметаются на нужный адрес. Сверху — админка с аналитикой, правами по проектам и 2FA. Её показать не могу: проект коммерческий, обороты там чужие.",
+  //     en: "A crypto payment gateway that runs on its own infrastructure — no third-party custody. It takes USDT, USDC, BTC, ETH, TON, TRX, LTC, DOGE and SOL across eight networks: every invoice gets a temporary wallet, payment events fire signed webhooks, and wallets are swept to a target address on a schedule. On top sits an admin panel with analytics, per-project permissions and 2FA — which I can't show: the project is commercial and the turnover there isn't mine.",
+  //   },
+  //   hue: 135,
+  //   tags: ["React", "Vite", "Express", "PostgreSQL", "Redis", "ethers.js"],
+  //   shots: ["/shots/cryptomia-landing.webp"],
+  //   commercial: true,
+  //   live: "https://pustbudt.xyz",
+  //   flow: [
+  //     {
+  //       icon: Receipt,
+  //       label: { ru: "Счёт", en: "Invoice" },
+  //       hint: {
+  //         ru: "мерчант создаёт счёт: сумма, монета и сеть — USDT, BTC, TON и ещё шесть монет в восьми сетях.",
+  //         en: "the merchant creates an invoice: amount, coin and network — USDT, BTC, TON and six more coins across eight networks.",
+  //       },
+  //     },
+  //     {
+  //       icon: Wallet,
+  //       label: { ru: "Кошелёк", en: "Wallet" },
+  //       hint: {
+  //         ru: "под счёт заводится свой временный кошелёк, так что платёж ни с чем не перепутать.",
+  //         en: "the invoice gets its own temporary wallet, so a payment can't be mixed up with another.",
+  //       },
+  //     },
+  //     {
+  //       icon: Radar,
+  //       label: { ru: "Оплата", en: "Payment" },
+  //       hint: {
+  //         ru: "сервис ловит перевод на адрес счёта — всё на своей инфраструктуре, без стороннего кастодиана.",
+  //         en: "the service catches the transfer to the invoice address — all on its own infrastructure, no third-party custody.",
+  //       },
+  //     },
+  //     {
+  //       icon: Webhook,
+  //       label: { ru: "Вебхук", en: "Webhook" },
+  //       hint: {
+  //         ru: "по событиям оплаты мерчанту уходят подписанные вебхуки — подделать статус не выйдет.",
+  //         en: "payment events fire signed webhooks to the merchant — the status can't be forged.",
+  //       },
+  //     },
+  //     {
+  //       icon: ArrowDownToLine,
+  //       label: { ru: "Свип", en: "Sweep" },
+  //       hint: {
+  //         ru: "по расписанию временные кошельки сметаются на нужный адрес, и деньги не висят по сотне адресов.",
+  //         en: "on a schedule the temporary wallets are swept to the target address, so funds don't sit scattered across addresses.",
+  //       },
+  //     },
+  //   ],
+  //   // Репозиторий BogdanGlushkov/cryptoservice закрытый — см. ZVONOCHEK ниже.
+  //   commits: 2239,
+  // },
   {
     title: "GOSLING",
     subtitle: { ru: "SEO ЛЕНДИНГИ С ИИ", en: "AI SEO LANDING PAGES" },
